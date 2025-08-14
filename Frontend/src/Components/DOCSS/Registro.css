@@ -15,7 +15,7 @@
 }
 
 .form-container {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 30px;
@@ -28,11 +28,9 @@ h2 {
     margin-bottom: 20px;
     color: #333;
 }
-
-.logoLogin {
-    width: 100%;
-    max-width: 200px;
-    margin-bottom: 20px;
+.logoLogin{
+    width: 60%;
+    margin-bottom: 0px;
 }
 
 label {
