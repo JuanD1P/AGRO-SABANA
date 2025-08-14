@@ -1,0 +1,108 @@
+/* Admin.css */
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background: url("../../ImagenesP/ImagenesLogin/FONDO.png"); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.admin-title {
+    font-size: 28px;  /* Tamaño del texto */
+    font-weight: bold; /* Hace el texto más grueso */
+    color: #64f5fa; /* Azul llamativo */
+    text-align: center; /* Centrar el texto */
+    text-transform: uppercase; /* Convierte el texto en mayúsculas */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    margin-bottom: 15px; /* Espacio debajo del título */
+    -webkit-text-stroke: 1.5px black; /* Delineado negro */
+}
+
+
+/* 🚀 TABLA DE USUARIOS */
+.admin-table {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.admin-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.admin-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* 🚀 SELECTOR DE ROL */
+.admin-role-select {
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+}
+
+.admin-role-select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* 🚀 BOTÓN DE ELIMINAR */
+.admin-delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.admin-delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* 🚀 RESPONSIVE */
+@media (max-width: 768px) {
+    .admin-table {
+        width: 100%;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+.admin-logo {
+    width: 150px; /* Ajusta el tamaño del logo */
+    display: block;
+    margin: 0 auto 10px; /* Centra el logo arriba del título */
+}

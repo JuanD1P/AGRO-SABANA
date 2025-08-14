@@ -1,0 +1,118 @@
+/* Login.css */
+.LoginPcontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+        -webkit-backdrop-filter: blur(1px); 
+    backdrop-filter: blur(1px); 
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: url("../../ImagenesP/ImagenesLogin/FONDO.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+.logoLogin {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.LoginScontainer {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.formularioLogin {
+    display: flex;
+    flex-direction: column;
+}
+
+.form1, .form2, .form3 {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+label {
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="email"],
+input[type="password"],
+input[type="checkbox"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.input1:focus,
+.input2:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.text-dangerLogin {
+    color: red;
+    margin-bottom: 10px;
+    display: none; 
+}
+
+.text-dangerLogin.show {
+    display: block; 
+}
+
+.boton2 {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.boton2:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.boton2:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+.botonLogin1 {
+    background-color: transparent;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-decoration: underline;
+}
+
+.botonLogin1:hover {
+    color: #0056b3;
+}
