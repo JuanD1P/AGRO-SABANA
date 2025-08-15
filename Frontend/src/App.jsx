@@ -6,6 +6,7 @@ import Inicio from './Components/Inicio';
 import NotFound from './Components/NotFound';
 import ProtectedRoute from './Components/PrivateRoute';
 import Admin from './Components/Admin';
+import Mercado from './Components/Mercado';
 
 
 function App() {
@@ -30,7 +31,11 @@ function App() {
                         <Inicio />
                     </ProtectedRoute>
                 } />
-                
+                <Route path="/Mercado" element={
+                    <ProtectedRoute allowedRoles={['USER']}>
+                        <Mercado />
+                    </ProtectedRoute>
+                } />
 
                 {/* RUTA NO ENCONTRADA */}
                 <Route path="*" element={<NotFound />} />
