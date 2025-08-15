@@ -5,7 +5,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import './DOCSS/Registro.css';
 import logo from '../ImagenesP/ImagenesLogin/LOGO.png';
 
-
 const Registro = () => {
     const [values, setValues] = useState({
         nombre_completo: '',
@@ -24,17 +23,39 @@ const Registro = () => {
         event.preventDefault();
         setError(null);
 
-        // Validaciones de campos
+        // Validaciones de campos obligatorios
         if (!values.nombre_completo || !values.email || !values.password || !values.confirmPassword) {
             setError("Todos los campos son obligatorios");
             return;
         }
 
+        // ✅ Validación: el correo debe contener al menos un '@'
+        if (!values.email.includes('@')) {
+            setError("El correo debe contener un '@'");
+            return;
+        }
+
+        // ✅ Validación: longitud mínima de contraseña
         if (values.password.length < 6) {
             setError("La contraseña debe tener al menos 6 caracteres");
             return;
         }
 
+        // ✅ Validación: debe contener al menos una letra
+        const hasLetter = /[A-Za-z]/.test(values.password);
+        if (!hasLetter) {
+            setError("La contraseña debe contener al menos una letra");
+            return;
+        }
+
+        // ✅ Validación: debe contener al menos un número
+        const hasNumber = /\d/.test(values.password);
+        if (!hasNumber) {
+            setError("La contraseña debe contener al menos un número");
+            return;
+        }
+
+        // Validación: coincidencia de contraseñas
         if (values.password !== values.confirmPassword) {
             setError("Las contraseñas no coinciden");
             return;
@@ -62,16 +83,14 @@ const Registro = () => {
 
     return (
         <div className="registro-container">
-            
-
             {error && <div className='error-message'>{error}</div>}
 
             <form onSubmit={handleSubmit} className='form-container'>
                 <div>
-                <img src={logo} alt="Logo" className="logoLogin" />
-                <h2>Página de Registro</h2>
+                    <img src={logo} alt="Logo" className="logoLogin" />
+                    <h2>Página de Registro</h2>
                 </div>
-                
+
                 <label>Nombre Completo</label>
                 <input 
                     type="text"
