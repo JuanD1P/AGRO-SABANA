@@ -88,31 +88,32 @@ const Registro = () => {
             <form onSubmit={handleSubmit} className='form-container'>
                 <div>
                     <img src={logo} alt="Logo" className="logoLogin" />
-                    <h2>Página de Registro</h2>
+                    <h1>BIENVENIDO</h1>
+                    <p>Completa el formulario: </p>
                 </div>
 
-                <label>Nombre Completo</label>
                 <input 
                     type="text"
                     value={values.nombre_completo}
                     onChange={(e) => setValues({ ...values, nombre_completo: e.target.value })} 
+                    placeholder="Nombre Completo"
                     required
                 />
-
-                <label>Email</label>
+    
                 <input 
                     type="email"
                     value={values.email}
                     onChange={(e) => setValues({ ...values, email: e.target.value })} 
+                    placeholder="Email"
                     required
                 />
 
-                <label>Contraseña</label>
                 <div className="password-container">
                     <input 
                         type={showPassword ? 'text' : 'password'} 
                         value={values.password}
                         onChange={(e) => setValues({ ...values, password: e.target.value })} 
+                        placeholder="Contraseña"
                         required
                     />
                     <button 
@@ -123,12 +124,12 @@ const Registro = () => {
                     </button>
                 </div>
 
-                <label>Confirmar Contraseña</label>
                 <div className="password-container">
                     <input 
                         type={showConfirmPassword ? 'text' : 'password'} 
                         value={values.confirmPassword}
                         onChange={(e) => setValues({ ...values, confirmPassword: e.target.value })} 
+                        placeholder="Confirmar Contraseña"
                         required
                     />
                     <button 
