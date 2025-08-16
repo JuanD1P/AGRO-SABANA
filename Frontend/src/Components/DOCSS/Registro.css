@@ -22,14 +22,22 @@
     width: 100%;
     max-width: 400px;
     text-align: center;
+    margin: 0 auto; /* centra horizontalmente la caja */
 }
 
-h2 {
-    margin-bottom: 20px;
-    color: #333;
+h1 {
+    margin-bottom: 5px;
+    color: #28523d;
 }
+
+p {
+    margin-top: 0%;
+    margin-bottom: 15px;
+    color: #28523d;
+}
+
 .logoLogin{
-    width: 60%;
+    width: 50%;
     margin-bottom: 0px;
 }
 
@@ -37,26 +45,31 @@ label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #555;
+    color: #28523d;
 }
 
-input {
-    width: 100%;
+input,
+.password-container input {
+    display: block;
+    margin: 0 auto 15px auto;
+    width: 90%;
     padding: 10px;
-    margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s;
 }
 
 input:focus {
-    border-color: #007bff;
+    border-color: #3f8061;
     outline: none;
 }
 
 .password-container {
     position: relative;
+    width: 100%; /* que no se achique */
+    display: flex;
+    justify-content: center; /* centra el input y botón */
 }
 
 button[type="button"] {
@@ -66,28 +79,43 @@ button[type="button"] {
     background: none;
     border: none;
     cursor: pointer;
-    color: #007bff;
+    color: #3f8061;
     font-size: 18px;
 }
 
 button[type="submit"] {
-    background-color: #007bff;
+    display: block; /* asegura que se comporten como bloques */
+    margin: 0 auto 15px auto; /* centra horizontalmente */
+    width: 90%; /* que no toque los bordes de la caja */
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #53a77e;
     color: white;
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 100%;
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #3f8061;
 }
 
-.error-message {
-    color: #ff4d4d;
+/*.error-message {
+    color: #440505;
     margin-bottom: 15px;
     font-weight: bold;
+}*/
+
+.error-message {
+  background: #fdecea;       /* Rojo claro */
+  color: #b71c1c;            /* Rojo fuerte */
+  border: 1px solid #f5c2c0; /* Borde sutil */
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: 500;
+  font-size: 14px;
 }

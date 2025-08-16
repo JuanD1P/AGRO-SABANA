@@ -67,7 +67,6 @@ const Login = () => {
                 </div>
                 <form onSubmit={handleSubmit} className='formularioLogin'>
                     <div className='form1'>
-                        <label htmlFor='email'><strong>Email</strong></label>
                         <input 
                             type='email' 
                             name='email' 
@@ -78,7 +77,6 @@ const Login = () => {
                         />
                     </div>
                     <div className='form2'>
-                        <label htmlFor='password'><strong>Contraseña</strong></label>
                         <input 
                             type='password' 
                             name='password' 
