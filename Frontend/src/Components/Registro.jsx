@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -141,6 +142,7 @@ const Registro = () => {
                 </div>
 
                 <button type="submit">Registrarse</button>
+                <button onClick={() => navigate('/userlogin')} className='botonLogin1'>Inicia Sesion</button>
             </form>
         </div>
     );
