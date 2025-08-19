@@ -1,0 +1,86 @@
+/* src/Components/Navbar.css */
+
+.navbar {
+  background-color: #28523d; /* Verde agro-sabana */
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar .logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  margin-top: 0%;
+}
+
+.logoNavbar {
+  height: 40px;   /* ajusta el tamaño */
+  width: auto;    /* mantiene proporción */
+}
+
+.navbar-links {
+  display: flex;
+  gap: 30px;
+  margin-right: 50px;
+}
+
+.navbar-links > a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.navbar-links > a:hover {
+  color: #77d17a; /* Verde claro */
+}
+
+.active-link {
+  border-bottom: 2px solid white;
+}
+
+/* Estilos del dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: white; /* ajusta al color de tu navbar */
+  padding: 2px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.dropbtn:hover {
+  color: #77d17a; /* Verde claro */
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: white;
+  color: black;
+  min-width: 160px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 10px;
+  color: black !important;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background-color: #b3d2b4;
+}

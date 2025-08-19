@@ -13,27 +13,43 @@
     background-repeat: no-repeat;
 }
 
+.admin-box {
+    background: rgba(255, 255, 255, 0.4); /* Blanco con opacidad */
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    max-width: 1000px;
+    width: 95%;
+}
+
+/* LOGO */
+.admin-logo {
+    width: 150px;
+    display: block;
+    margin: 0 auto 15px;
+}
+
 .admin-title {
     font-size: 28px;  /* Tamaño del texto */
     font-weight: bold; /* Hace el texto más grueso */
-    color: #64f5fa; /* Azul llamativo */
+    color: #28523d; /* Azul llamativo */
     text-align: center; /* Centrar el texto */
     text-transform: uppercase; /* Convierte el texto en mayúsculas */
     letter-spacing: 2px; /* Espaciado entre letras */
     margin-bottom: 15px; /* Espacio debajo del título */
-    -webkit-text-stroke: 1.5px black; /* Delineado negro */
+    -webkit-text-stroke: 1.5px #28523d; /* Delineado negro */
 }
 
 
 /* 🚀 TABLA DE USUARIOS */
 .admin-table {
     width: 100%;
-    max-width: 900px;
     border-collapse: collapse;
-    background: rgba(255, 255, 255, 0.9);
+    background: white;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    margin-top: 15px;
 }
 
 .admin-table th,
@@ -44,7 +60,7 @@
 }
 
 .admin-table th {
-    background-color: #007bff;
+    background-color: #3f8061;
     color: white;
     font-weight: bold;
 }
@@ -62,19 +78,19 @@
     padding: 8px;
     font-size: 14px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: 1px solid #204030;
     background-color: white;
     cursor: pointer;
 }
 
 .admin-role-select:focus {
-    border-color: #007bff;
+    border-color: #3f8061;
     outline: none;
 }
 
 /* 🚀 BOTÓN DE ELIMINAR */
 .admin-delete-btn {
-    background-color: #dc3545;
+    background-color: #428565;
     color: white;
     border: none;
     padding: 8px 12px;
@@ -85,7 +101,7 @@
 }
 
 .admin-delete-btn:hover {
-    background-color: #c82333;
+    background-color: #224d38;
 }
 
 /* 🚀 RESPONSIVE */
