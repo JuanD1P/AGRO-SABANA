@@ -52,52 +52,54 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      <img src={logo} alt="Logo de la aplicación" className="admin-logo" />
-      <h2 className="admin-title">Panel de Administración</h2>
+      <div className="admin-box">
+        <img src={logo} alt="Logo de la aplicación" className="admin-logo" />
+        <h2 className="admin-title">Panel de Administración</h2>
 
-      {loading ? <p>Cargando...</p> : (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nombre Completo</th>
-              <th>Email</th>
-              <th>Rol</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((u) => (
-              <tr key={u.id}>
-                <td>{u.id}</td>
-                <td>{u.nombre_completo}</td>
-                <td>{u.email}</td>
-                <td>
-                  <select
-                    className="admin-role-select"
-                    value={u.rol}
-                    onChange={(e) => cambiarRol(u.id, e.target.value)} 
-                  >
-                    <option value="USER">USER</option>
-                    <option value="ADMIN">ADMIN</option>
-                  </select>
-                </td>
-                <td>
-                  <button
-                    className="admin-delete-btn"
-                    onClick={() => eliminarUsuario(u.id)} 
-                  >
-                    ❌ Eliminar
-                  </button>
-                </td>
+        {loading ? <p>Cargando...</p> : (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-            {usuarios.length === 0 && (
-              <tr><td colSpan="5" style={{ textAlign: 'center' }}>No hay usuarios</td></tr>
-            )}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {usuarios.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.id}</td>
+                  <td>{u.nombre_completo}</td>
+                  <td>{u.email}</td>
+                  <td>
+                    <select
+                      className="admin-role-select"
+                      value={u.rol}
+                      onChange={(e) => cambiarRol(u.id, e.target.value)} 
+                    >
+                      <option value="USER">USER</option>
+                      <option value="ADMIN">ADMIN</option>
+                    </select>
+                  </td>
+                  <td>
+                    <button
+                      className="admin-delete-btn"
+                      onClick={() => eliminarUsuario(u.id)} 
+                    >
+                      ❌ Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {usuarios.length === 0 && (
+                <tr><td colSpan="5" style={{ textAlign: 'center' }}>No hay usuarios</td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
