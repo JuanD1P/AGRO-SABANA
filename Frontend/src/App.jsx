@@ -8,6 +8,8 @@ import ProtectedRoute from './Components/PrivateRoute';
 import Admin from './Components/Admin';
 import Mercado from './Components/Mercado';
 import Navbar from './Components/Navbar';
+import GraficasA from './Components/GraficasA';
+
 
 
 
@@ -21,13 +23,19 @@ function App() {
                 <Route path="/Registro" element={<Registro />} />
                 
                 {/* RUTAS PARA EL ADMINISTRADOR */}
-                <Route element={<LayoutWithNavbar />}>
+
                     <Route path="/Admin" element={
                         <ProtectedRoute allowedRoles={['ADMIN']}>
                             <Admin />
                         </ProtectedRoute>
                     } />
-                </Route>
+
+                    <Route path="/GraficasA" element={
+                        <ProtectedRoute allowedRoles={['ADMIN']}>
+                            <GraficasA />
+                        </ProtectedRoute>
+                    } />
+
 
                 {/* RUTAS PARA LOS USUARIOS */}   
 

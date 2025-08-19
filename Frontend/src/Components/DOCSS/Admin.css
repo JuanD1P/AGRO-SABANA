@@ -41,6 +41,28 @@
     -webkit-text-stroke: 1.5px #28523d; /* Delineado negro */
 }
 
+button.botongraficas {
+    display: block; /* asegura que se comporten como bloques */
+    margin: 0 auto 15px auto; /* centra horizontalmente */
+    width: 15%; /* que no toque los bordes de la caja */
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #428565;
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;   /* evita que parezca enlace */
+    outline: none;           /* quita el borde azul de focus */
+}
+
+button.botongraficas:hover {
+    background-color: #224d38;
+    color: white;
+}
 
 /* 🚀 TABLA DE USUARIOS */
 .admin-table {

@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import "./DOCSS/Navbar.css";
-import logo from '../ImagenesP/ImagenesLogin/LOGO.png';
+import logo from '../ImagenesP/ImagenesLogin/LOGO 2.0.jpg';
 import { useState } from "react";
 
 export default function Navbar() {
@@ -17,7 +17,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <NavLink to="/" className="logo">
-        AgroSabana
+        <img src={logo} alt="Logo" className="logoNavbar" />
       </NavLink>
       <div className="navbar-links">
         {/* Menú desplegable */}

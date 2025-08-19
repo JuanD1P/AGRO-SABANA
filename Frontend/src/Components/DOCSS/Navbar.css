@@ -17,8 +17,9 @@
 }
 
 .logoNavbar {
-  height: 40px;   /* ajusta el tamaño */
+  height: 45px;   /* ajusta el tamaño */
   width: auto;    /* mantiene proporción */
+  margin: 0%;
 }
 
 .navbar-links {

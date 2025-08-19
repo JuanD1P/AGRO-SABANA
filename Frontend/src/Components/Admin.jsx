@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import logo from '../ImagenesP/ImagenesLogin/LOGO.png';
 import './DOCSS/Admin.css';  
 
 axios.defaults.withCredentials = true;
+
 
 const api = axios.create({
   baseURL: 'http://localhost:3000/auth',
@@ -11,6 +13,7 @@ const api = axios.create({
 });
 
 const Admin = () => {
+  const navigate = useNavigate(); 
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -55,6 +58,7 @@ const Admin = () => {
       <div className="admin-box">
         <img src={logo} alt="Logo de la aplicación" className="admin-logo" />
         <h2 className="admin-title">Panel de Administración</h2>
+        <button onClick={() => navigate('/GraficasA')} className='botongraficas'>Ir a Gráficas</button>
 
         {loading ? <p>Cargando...</p> : (
           <table className="admin-table">
