@@ -87,6 +87,7 @@ const handleBuscar = () => {
     return;
   }
   navigate("/Top3");
+  if (location.pathname === "/Top3") navigate(0);
 };
 
 
@@ -210,10 +211,13 @@ const handleBuscar = () => {
           </div>
 
           {/* BUSCAR */}
-          <button className="asb-cta" onClick={handleBuscar}>
+          <button className="asb-cta" onClick={handleBuscar} >
             Buscar
           </button>
+
+          
             {/* CERRAR SESIÓN */}
+            
             <button
               className="asb-logout"
               onClick={() => {
@@ -227,6 +231,7 @@ const handleBuscar = () => {
 
 
         </div>
+        
       </div>
       <ToastContainer />
     </nav>

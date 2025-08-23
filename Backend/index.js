@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { userRouter } from './Routes/usuariosR.js';
+import { productosRouter } from './Routes/Productos.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', userRouter);
+app.use('/productos', productosRouter);
 
 app.listen(3000, () => {
     console.log("🚀 Servidor en funcionamiento en http://localhost:3000");
