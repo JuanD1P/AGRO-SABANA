@@ -11,6 +11,8 @@ const Login = () => {
     });
     localStorage.removeItem('auth-token');
     localStorage.removeItem('user-role');
+    localStorage.removeItem('municipioSeleccionado');
+    localStorage.removeItem('fechaSeleccionada');
     const [error, setError] = useState(null);
     const [termsAccepted, setTermsAccepted] = useState(false);
     const navigate = useNavigate();

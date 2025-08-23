@@ -1,4 +1,3 @@
-// App.jsx (encabezado correcto)
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import Login from './Components/Login';
 import Registro from './Components/Registro';
@@ -9,10 +8,8 @@ import Admin from './Components/Admin';
 import Mercado from './Components/Mercado';
 import Navbar from './Components/Navbar';
 import GraficasA from './Components/GraficasA';
-
-
-
-
+import Recomendacion from './Components/Recomendacion';
+import Top3 from './Components/Top3';
 
 function App() {
     return (
@@ -21,6 +18,7 @@ function App() {
                 <Route path="/" element={<Navigate to="/userlogin" />} />
                 <Route path="/userlogin" element={<Login />} />
                 <Route path="/Registro" element={<Registro />} />
+
                 
                 {/* RUTAS PARA EL ADMINISTRADOR */}
 
@@ -45,12 +43,27 @@ function App() {
                             <Inicio />
                         </ProtectedRoute>
                     } />
-                </Route>
+                
                 <Route path="/Mercado" element={
                     <ProtectedRoute allowedRoles={['USER']}>
                         <Mercado />
                     </ProtectedRoute>
                 } />
+                <Route element={<LayoutWithNavbar />}></Route>
+                <Route path="/Recomendacion" element={
+                    <ProtectedRoute allowedRoles={['USER']}> 
+                        <Recomendacion />
+                    </ProtectedRoute>
+                } />
+                <Route element={<LayoutWithNavbar />}></Route>
+                <Route path="/Top3" element={
+                    <ProtectedRoute allowedRoles={['USER']}>    
+                        <Top3 />
+                    </ProtectedRoute>
+                } />
+                </Route>
+
+    
 
                 {/* RUTA NO ENCONTRADA */}
                 <Route path="*" element={<NotFound />} />
@@ -59,7 +72,8 @@ function App() {
     );
 }
 
-// Layout con Navbar fijo
+
+//Navbar
 function LayoutWithNavbar() {
   return (
     <>
