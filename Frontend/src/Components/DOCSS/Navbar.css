@@ -71,7 +71,7 @@
   60% { transform: translateY(1px) rotate(2deg); }
 }
 
-/* Respeta usuarios con motion reducido */
+
 @media (prefers-reduced-motion: reduce){
   * { animation: none !important; transition: none !important; }
 }
@@ -201,7 +201,7 @@
 }
 .asb-empty{ color: var(--asb-muted); font-size:.9rem; grid-column: 1/-1; padding: 10px; text-align:center; }
 
-/* Ítems con “stagger” de entrada */
+
 .asb-card-item{
   position: relative;
   display:flex; align-items:center; gap:10px;

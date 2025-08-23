@@ -2,6 +2,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import "./DOCSS/Navbar.css";
 import logo from "../ImagenesP/ImagenesLogin/LOGO 2.0.png";
 import { useEffect, useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -70,10 +73,22 @@ export default function Navbar() {
     setDdFechaOpen(false);
   };
 
-  const handleBuscar = () => {
-    if (!selectedMunicipio || !selectedDate) return alert("Selecciona municipio y fecha");
-    navigate("/Top3");
-  };
+const handleBuscar = () => {
+  if (!selectedMunicipio || !selectedDate) {
+    toast.error("Selecciona municipio y fecha", {
+      position: "top-right",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "colored",
+    });
+    return;
+  }
+  navigate("/Top3");
+};
+
 
   const filteredMunicipios = municipios.filter(m =>
     m.toLowerCase().includes(muniQuery.trim().toLowerCase())
@@ -213,6 +228,7 @@ export default function Navbar() {
 
         </div>
       </div>
+      <ToastContainer />
     </nav>
   );
 }
