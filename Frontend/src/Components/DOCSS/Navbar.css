@@ -42,6 +42,25 @@
   }
 }
 
+/* Evita desbordes por padding/borde */
+.asb-panel,
+.asb-panel-head,
+.asb-dd-search,
+.asb-input{
+  box-sizing: border-box;
+}
+
+.asb-dd-search{
+  width: 100%;
+  display: block;
+}
+
+/* (Opcional) si quieres que el glow del focus no se vea por fuera del panel */
+.asb-panel{
+  overflow: hidden;              /* recorta el brillo en los bordes redondeados */
+  /* y si quieres que sea más flexible de ancho: */
+  /* min-width: clamp(280px, 40vw, 360px); */
+}
 /* =================== Animations (keyframes) =================== */
 @keyframes asb-fadeIn {
   from { opacity:0; transform: translateY(-6px); }
