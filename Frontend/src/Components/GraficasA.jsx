@@ -1,12 +1,25 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  LabelList,
+} from "recharts";
+import "./DOCSS/GraficasA.css";
 
 const GraficasA = () => {
-  const [rows, setRows] = useState([]);         
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [openIds, setOpenIds] = useState(new Set()); 
-  const [q, setQ] = useState("");              
+  const [openIds, setOpenIds] = useState(new Set());
+  const [q, setQ] = useState("");
+  const [selected, setSelected] = useState(null);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -30,106 +43,114 @@ const GraficasA = () => {
   const filtered = useMemo(() => {
     if (!q.trim()) return rows;
     const term = q.toLowerCase();
+    const match = (v) => String(v ?? "").toLowerCase().includes(term);
+
     return rows
-      .map(m => ({
+      .map((m) => ({
         ...m,
-        productos: m.productos.filter(
-          p =>
-            p.producto.toLowerCase().includes(term) ||
-            String(p.ciclo_dias || "").toLowerCase().includes(term)
+        productos: (m.productos || []).filter(
+          (p) =>
+            match(p.producto) ||
+            match(p.ciclo_dias) ||
+            match(p.temp_min) ||
+            match(p.temp_max) ||
+            match(p.humedad_min) ||
+            match(p.humedad_max) ||
+            match(p.cont)
         ),
       }))
-      .filter(m =>
-        m.municipio.toLowerCase().includes(term) || m.productos.length > 0
-      );
+      .filter((m) => match(m.municipio) || (m.productos || []).length > 0);
   }, [rows, q]);
 
   const toggle = (id) => {
-    setOpenIds(prev => {
+    setOpenIds((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
   };
 
-  if (loading) return <div style={{ padding: 16 }}>Cargando…</div>;
-  if (error) return <div style={{ padding: 16, color: "red" }}>{error}</div>;
+  const num = (v) => (v == null || v === "" ? 0 : Number(v));
+
+  // Datos para gráficas
+  const cicloData = (p) => [{ name: "Ciclo", ciclo: num(p.ciclo_dias) }];
+  const temperaturaData = (p) => [
+    { name: "Temperatura", min: num(p.temp_min), max: num(p.temp_max) },
+  ];
+  const humedadData = (p) => [
+    { name: "Humedad", min: num(p.humedad_min), max: num(p.humedad_max) },
+  ];
+  const contadorData = (p) => [{ name: "Contador", cont: num(p.cont) }];
+
+  if (loading) return <div className="loading">Cargando…</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
-    <div style={{ padding: 16, maxWidth: 960, margin: "0 auto" }}>
-      <h2 style={{ marginBottom: 8 }}>🌱 Municipios y productos</h2>
-      <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+    <div className="graficasContainer">
+      <h2 className="pageTitle">🌱 Municipios y productos</h2>
+
+      <div className="searchRow">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Buscar municipio o producto…"
-          style={{
-            flex: 1,
-            padding: "10px 12px",
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            outline: "none",
-          }}
+          className="input"
         />
-        <span style={{ fontSize: 12, color: "#666" }}>
-          {filtered.length} municipios
-        </span>
+        <span className="mutedText">{filtered.length} municipios</span>
       </div>
 
-      {filtered.length === 0 && (
-        <div style={{ color: "#666" }}>Sin resultados.</div>
-      )}
+      {filtered.length === 0 && <div className="mutedText">Sin resultados.</div>}
 
-      <div style={{ display: "grid", gap: 10 }}>
+      <div className="cardGrid">
         {filtered.map((m) => {
           const isOpen = openIds.has(m.municipio_id);
+          const totalCont = (m.productos || []).reduce(
+            (acc, p) => acc + (Number(p.cont) || 0),
+            0
+          );
+
           return (
-            <div
-              key={m.municipio_id}
-              style={{
-                border: "1px solid #e3e3e3",
-                borderRadius: 12,
-                overflow: "hidden",
-                boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-                background: "#fff",
-              }}
-            >
-              <button
-                onClick={() => toggle(m.municipio_id)}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "transparent",
-                  border: "none",
-                  padding: "14px 16px",
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  fontWeight: 600,
-                }}
-              >
+            <div key={m.municipio_id} className="card">
+              <button onClick={() => toggle(m.municipio_id)} className="cardHeaderBtn">
                 <span>{m.municipio}</span>
-                <span style={{ fontSize: 12, color: "#666" }}>
-                  {m.productos.length} productos
+                <span className="mutedRow">
+                  <span>{(m.productos || []).length} productos</span>
+                  <span>∑ cont: {totalCont}</span>
                 </span>
               </button>
 
               {isOpen && (
-                <div style={{ padding: "0 16px 12px 16px" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <div className="tableWrapper">
+                  <table className="table">
                     <thead>
-                      <tr style={{ textAlign: "left" }}>
-                        <th style={{ padding: "8px 0" }}>Producto</th>
-                        <th style={{ padding: "8px 0" }}>Ciclo (días)</th>
+                      <tr>
+                        <th>Producto</th>
+                        <th>Ciclo (días)</th>
+                        <th>Temp. mín</th>
+                        <th>Temp. máx</th>
+                        <th>Humedad mín</th>
+                        <th>Humedad máx</th>
+                        <th>Contador</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
-                      {m.productos.map((p) => (
-                        <tr key={p.producto_id} style={{ borderTop: "1px solid #f0f0f0" }}>
-                          <td style={{ padding: "8px 0" }}>{p.producto}</td>
-                          <td style={{ padding: "8px 0" }}>
-                            {p.ciclo_dias ?? "—"}
+                      {(m.productos || []).map((p, idx) => (
+                        <tr key={p.producto_id} className={idx % 2 ? "zebra" : ""}>
+                          <td>{p.producto ?? "—"}</td>
+                          <td>{p.ciclo_dias ?? "—"}</td>
+                          <td>{p.temp_min ?? "—"}</td>
+                          <td>{p.temp_max ?? "—"}</td>
+                          <td>{p.humedad_min ?? "—"}</td>
+                          <td>{p.humedad_max ?? "—"}</td>
+                          <td>{p.cont ?? 0}</td>
+                          <td>
+                            <button
+                              onClick={() => setSelected({ municipio: m.municipio, producto: p })}
+                              className="btnPrimary"
+                            >
+                              Ver gráficas
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -142,12 +163,96 @@ const GraficasA = () => {
         })}
       </div>
 
-      <div style={{ marginTop: 16, fontSize: 12, color: "#777" }}>
-        Tip: haz clic en el municipio para expandir/contraer.
-      </div>
+      {/* Modal */}
+      {selected && (
+        <div role="dialog" aria-modal="true" onClick={() => setSelected(null)} className="backdrop">
+          <div onClick={(e) => e.stopPropagation()} className="modal">
+            <div className="modalHeader">
+              <div>
+                <div className="title">{selected.producto.producto}</div>
+                <div className="subtitle">Municipio: {selected.municipio}</div>
+              </div>
+              <button onClick={() => setSelected(null)} className="iconBtn">
+                ×
+              </button>
+            </div>
+
+            {/* Definición del contador */}
+            <div className="definitionBox">
+              <strong>Contador (índice de favorabilidad):</strong>{" "}
+              puntaje asignado a cada cultivo que combina:
+              clima y humedad en rangos óptimos para el cultivo, y la demanda
+              estimada del producto por persona. Un valor más alto indica
+              mejores condiciones y oportunidad de siembra.
+            </div>
+
+            <div className="chartsGrid">
+              <ChartCard title="Ciclo de días">
+                <MiniBar
+                  data={cicloData(selected.producto)}
+                  bars={[{ key: "ciclo", name: "Días de ciclo", fill: "var(--brand-600)" }]}
+                />
+              </ChartCard>
+
+              <ChartCard title="Temperatura (°C)">
+                <MiniBar
+                  data={temperaturaData(selected.producto)}
+                  bars={[
+                    { key: "min", name: "Mín", fill: "var(--orange-500)" },
+                    { key: "max", name: "Máx", fill: "var(--red-500)" },
+                  ]}
+                />
+              </ChartCard>
+
+              <ChartCard title="Humedad relativa (%)">
+                <MiniBar
+                  data={humedadData(selected.producto)}
+                  bars={[
+                    { key: "min", name: "Mín", fill: "var(--teal-500)" },
+                    { key: "max", name: "Máx", fill: "var(--brand-500)" },
+                  ]}
+                />
+              </ChartCard>
+
+              {/* NUEVA: Contador */}
+              <ChartCard title="Contador (índice)">
+                <MiniBar
+                  data={contadorData(selected.producto)}
+                  bars={[{ key: "cont", name: "Índice", fill: "var(--violet-500)" }]}
+                />
+              </ChartCard>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default GraficasA;
+const MiniBar = ({ data, bars }) => (
+  <div style={{ width: "100%", height: 170 }}>
+    <ResponsiveContainer>
+      <BarChart data={data} margin={{ top: 6, right: 10, left: 2, bottom: 6 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        {bars.map((b) => (
+          <Bar key={b.key} dataKey={b.key} name={b.name} fill={b.fill} radius={[8, 8, 0, 0]}>
+            <LabelList dataKey={b.key} position="top" />
+          </Bar>
+        ))}
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
 
+const ChartCard = ({ title, children }) => (
+  <div className="chartCard">
+    <div className="chartTitle">{title}</div>
+    {children}
+  </div>
+);
+
+export default GraficasA;

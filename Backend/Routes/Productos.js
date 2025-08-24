@@ -9,7 +9,7 @@ function verifyToken(req, res, next) {
     const token = req.cookies?.token || req.headers?.authorization?.replace('Bearer ', '');
     if (!token) return res.status(401).json({ ok: false, error: 'No token' });
 
-    const payload = jwt.verify(token, 'jwt_secret_key');
+    const payload = jwt.verify(token, 'jwt_secret_key'); // ideal: usar process.env.JWT_SECRET
     req.user = payload;
     next();
   } catch (err) {
@@ -28,7 +28,8 @@ router.get('/municipios-productos', verifyToken, (req, res) => {
       p.temp_min    AS temp_min,
       p.temp_max    AS temp_max,
       p.humedad_min AS humedad_min,
-      p.humedad_max AS humedad_max
+      p.humedad_max AS humedad_max,
+      COALESCE(p.cont, 0) AS cont
     FROM municipio m
     JOIN municipio_producto mp ON mp.municipio_id = m.id
     JOIN producto p           ON p.id = mp.producto_id
@@ -58,6 +59,7 @@ router.get('/municipios-productos', verifyToken, (req, res) => {
         temp_max: r.temp_max,
         humedad_min: r.humedad_min,
         humedad_max: r.humedad_max,
+        cont: r.cont, // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<  ¡aquí!
       });
     }
 
@@ -70,7 +72,8 @@ router.get('/flat', verifyToken, (req, res) => {
     SELECT 
       m.id AS municipio_id, m.nombre AS municipio,
       p.id AS producto_id,  p.nombre AS producto,
-      p.ciclo_dias, p.temp_min, p.temp_max, p.humedad_min, p.humedad_max
+      p.ciclo_dias, p.temp_min, p.temp_max, p.humedad_min, p.humedad_max,
+      COALESCE(p.cont, 0) AS cont
     FROM municipio m
     JOIN municipio_producto mp ON mp.municipio_id = m.id
     JOIN producto p           ON p.id = mp.producto_id
@@ -89,7 +92,10 @@ router.get('/flat', verifyToken, (req, res) => {
 // Listar todos los productos
 router.get('/productos', verifyToken, (req, res) => {
   con.query(
-    'SELECT id, nombre, ciclo_dias, temp_min, temp_max, humedad_min, humedad_max FROM producto ORDER BY nombre',
+    `SELECT id, nombre, ciclo_dias, temp_min, temp_max, humedad_min, humedad_max,
+            COALESCE(cont, 0) AS cont
+     FROM producto
+     ORDER BY nombre`,
     (err, rows) => {
       if (err) return res.status(500).json({ ok: false, error: 'DB error' });
       res.json({ ok: true, data: rows });
