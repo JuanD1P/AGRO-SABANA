@@ -55,6 +55,18 @@ function fDate(date) {
   }).format(date);
 }
 
+function toYMD(date) {
+  if (!date) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function fmt(v, suf = "") {
+  if (v === null || v === undefined) return "—";
+  return `${v}${suf}`;
+}
 
 const Top3 = () => {
   const [muni, setMuni] = useState(null);
@@ -104,13 +116,30 @@ const Top3 = () => {
     fetchData();
   }, [selectedMunicipio]);
 
+  useEffect(() => {
+    if (fechaSiembra && muni) {
+      const cosechas = {};
+      (muni.productos || []).forEach((p) => {
+        if (p?.ciclo_dias != null) {
+          const cosecha = addDays(fechaSiembra, p.ciclo_dias);
+          cosechas[p.producto] = toYMD(cosecha);
+        }
+      });
+      try {
+        localStorage.setItem("fechasCosecha", JSON.stringify(cosechas));
+        console.log("[Top3] fechas de cosecha guardadas:", cosechas);
+      } catch (e) {
+        console.warn("[Top3] No se pudo guardar fechasCosecha en localStorage:", e);
+      }
+    }
+  }, [fechaSiembra, muni]);
+
   if (loading) return <div style={{ padding: 16 }}>Cargando…</div>;
   if (error) return <div style={{ padding: 16, color: "#b91c1c", background: "#fee2e2", borderRadius: 12 }}>{error}</div>;
   if (!muni) return null;
 
   return (
     <div style={{ padding: 20, maxWidth: 1100, margin: "0 auto" }}>
-      {/* Encabezado */}
       <div
         style={{
           background: "linear-gradient(135deg, #1b2e22, #264734)",
@@ -137,6 +166,10 @@ const Top3 = () => {
             <tr>
               <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Producto</th>
               <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Ciclo (días)</th>
+              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Temp. mín (°C)</th>
+              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Temp. máx (°C)</th>
+              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Humedad mín (%)</th>
+              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Humedad máx (%)</th>
               <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Fecha de siembra</th>
               <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Fecha estimada de cosecha</th>
             </tr>
@@ -150,6 +183,12 @@ const Top3 = () => {
                 <tr key={p.producto_id} style={{ borderTop: "1px solid #f1f5f9" }}>
                   <td style={{ padding: "10px 14px" }}>{p.producto}</td>
                   <td style={{ padding: "10px 14px" }}>{ciclo != null ? ciclo : "—"}</td>
+
+                  <td style={{ padding: "10px 14px" }}>{fmt(p.temp_min, "°C")}</td>
+                  <td style={{ padding: "10px 14px" }}>{fmt(p.temp_max, "°C")}</td>
+                  <td style={{ padding: "10px 14px" }}>{fmt(p.humedad_min, "%")}</td>
+                  <td style={{ padding: "10px 14px" }}>{fmt(p.humedad_max, "%")}</td>
+
                   <td style={{ padding: "10px 14px" }}>
                     {fechaSiembra ? fDate(fechaSiembra) : "—"}
                   </td>
