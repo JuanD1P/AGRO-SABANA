@@ -282,8 +282,8 @@
   position: relative; overflow:hidden;
   display:inline-flex; align-items:center; justify-content:center;
   height: var(--asb-control-h);
-  padding: 0 18px; border-radius: 999px;
-  background: linear-gradient(180deg, var(--asb-g2), var(--asb-g1));
+  padding: 0 18px; border-radius: 15px;
+  background: linear-gradient(135deg, #53a77e, #27ae60);
   color: #fff; font-weight:700; letter-spacing:.2px;
   border: 1px solid var(--asb-g1);
   box-shadow: 0 6px 16px rgba(6,19,12,.25);
@@ -298,11 +298,11 @@
   display: flex; align-items: center; gap: 8px;
   margin-left: 1rem;
   padding: 8px 16px;
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  background: linear-gradient(135deg, #53a77e, #27ae60);
   color: #fff;
   font-weight: 700;
   border: none;
-  border-radius: 50px;
+  border-radius: 12px;
   cursor: pointer;
   transition: transform var(--asb-fast), box-shadow var(--asb-fast), filter var(--asb-fast);
   font-size: 0.95rem;
