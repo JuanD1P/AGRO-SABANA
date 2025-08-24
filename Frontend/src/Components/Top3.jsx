@@ -33,10 +33,19 @@ export default function Recomendacion() {
     const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
     return `${y}-${m}-${day}`;
   };
-  const formatPrettyDateShort = (str) => {
-    if (!str) return "—";
-    const d = new Date(str);
-    if (isNaN(d)) return "—";
+const parseLocalYMD = (ymd) => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd || ""));
+  if (!m) return null;
+  const [, y, mm, dd] = m;
+  return new Date(Number(y), Number(mm) - 1, Number(dd), 12);
+};
+
+const formatPrettyDateShort = (str) => {
+  if (!str) return "—";
+
+    const norm = /^\d{4}-\d{2}-\d{2}$/.test(str) ? str : normalizeDate(str);
+    const d = parseLocalYMD(norm);
+    if (!d || isNaN(d)) return "—";
     const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
     return `${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
   };
