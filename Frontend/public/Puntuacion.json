@@ -1,0 +1,22 @@
+{
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Papa criolla",
+      "ranking": {
+        "enero": 2,
+        "febrero": 3,
+        "marzo": 5,
+        "abril": 8,
+        "mayo": 12,
+        "junio": 11,
+        "julio": 9,
+        "agosto": 4,
+        "septiembre": 1,
+        "octubre": 6,
+        "noviembre": 10,
+        "diciembre": 7
+      }
+    }
+  ]
+}
