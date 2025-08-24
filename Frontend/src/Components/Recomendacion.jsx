@@ -8,7 +8,7 @@ export default function Recomendacion() {
 
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchErr, setBatchErr] = useState("");
-  const [batchResults, setBatchResults] = useState([]); 
+  const [batchResults, setBatchResults] = useState([]);
 
   const [prodLoading, setProdLoading] = useState(false);
   const [prodErr, setProdErr] = useState("");
@@ -17,9 +17,10 @@ export default function Recomendacion() {
   const [rankLoading, setRankLoading] = useState(false);
   const [rankErr, setRankErr] = useState("");
   const [rankData, setRankData] = useState([]);
-  const dateCacheRef = useRef(new Map());            
-  const lastHashRef = useRef("");             
-  const inFlightRef = useRef(false);         
+
+  const dateCacheRef = useRef(new Map());
+  const lastHashRef = useRef("");
+  const inFlightRef = useRef(false);
 
   const normalizeDate = (str) => {
     if (!str) return "";
@@ -63,8 +64,12 @@ export default function Recomendacion() {
       const found = (json.data || []).find(m => m.municipio?.toLowerCase() === selectedMunicipio.toLowerCase());
       if (!found) throw new Error(`No encontré datos para "${selectedMunicipio}".`);
 
+      // Asegurar orden alfabético
       found.productos.sort((a,b)=>a.producto.localeCompare(b.producto,"es"));
+      // found.productos ya debe traer cont
       setMuniData(found);
+
+      // Guarda fechas de cosecha (siembra + ciclo)
       const norm = normalizeDate(selectedDate);
       if (norm) {
         const d = new Date(`${norm}T12:00:00`);
@@ -116,7 +121,7 @@ export default function Recomendacion() {
     return { ok: false, error: lastErr || "Max retries reached" };
   };
 
-  // pool de concurrencia
+  // Concurrencia simple
   const runWithConcurrency = async (items, worker, concurrency = 3) => {
     const results = new Array(items.length);
     let idx = 0;
@@ -134,7 +139,7 @@ export default function Recomendacion() {
 
   // ── API 2024 optimizada ──
   const fetchBatch2024 = async () => {
-    if (inFlightRef.current) return;             
+    if (inFlightRef.current) return;
     const place = selectedMunicipio;
     if (!place) return;
 
@@ -217,11 +222,8 @@ export default function Recomendacion() {
           [];
 
         setRankData(arr);
-        console.log("[Puntuacion.json] cargados:", arr.length, "items");
-        if (arr.length) console.log("[Puntuacion.json] ejemplo:", arr[0]);
       } catch (e) {
         setRankErr(e.message);
-        console.error("[Puntuacion.json] error:", e);
       } finally {
         setRankLoading(false);
       }
@@ -229,6 +231,7 @@ export default function Recomendacion() {
     loadRanking();
   }, []);
 
+  // Une datos de BD (incluye cont) con clima
   const merged = useMemo(() => {
     if (!muniData) return [];
     const apiByProd = new Map(batchResults.map(r => [normName(r.producto), r]));
@@ -247,6 +250,7 @@ export default function Recomendacion() {
 
       return {
         producto: p.producto,
+        cont: p.cont ?? 0,                // 👈 propagamos el contador
         date2024: r?.date2024 || "",
         temp_avg_c: tempAvg,
         temp_min_c: m?.temp_min_c,
@@ -263,7 +267,7 @@ export default function Recomendacion() {
         hmax_opt: p.humedad_max,
         temp_ok,
         hum_ok,
-        puntos, 
+        puntos,
       };
     });
 
@@ -271,12 +275,8 @@ export default function Recomendacion() {
     for (const r of results) puntuaciones[r.producto] = r.puntos;
     try { localStorage.setItem("puntuacionesProductos", JSON.stringify(puntuaciones)); } catch {}
 
-    console.log("📊 PUNTUACIONES POR PRODUCTO (clima):");
-    results.forEach(r => console.log(`   ${r.producto}: ${r.puntos}`));
     const total = results.reduce((acc, r) => acc + r.puntos, 0);
-    console.log("👉 TOTAL PUNTOS (clima):", total);
-
-    return [...results, { producto: "TOTAL", puntos: total }];
+    return [...results, { producto: "TOTAL", puntos: total, cont: 0 }];
   }, [muniData, batchResults]);
 
   const monthKeys = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
@@ -287,12 +287,13 @@ export default function Recomendacion() {
     for (const ymd of candidates) {
       if (ymd && /^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
         const dt = new Date(`${ymd}T00:00:00`);
-        if (!isNaN(dt)) return dt.getMonth(); 
+        if (!isNaN(dt)) return dt.getMonth();
       }
     }
     return null;
   };
 
+  // Ranking mensual + puntaje final (restando 0.4 * cont)
   const rankingRows = useMemo(() => {
     const rows = [];
     if (!rankData.length) return rows;
@@ -304,32 +305,30 @@ export default function Recomendacion() {
     products.forEach((p) => {
       const mIdx = getMonthIndexForProduct(p);
       if (mIdx == null) {
-        console.warn("[Ranking] Sin mes para", p.producto, { date2024: p.date2024, selectedDate });
-        rows.push({ producto: p.producto, mes: "—", puesto: "—", puntosClima: p.puntos ?? 0, puntosFinales: p.puntos ?? 0 });
+        rows.push({ producto: p.producto, mes: "—", puesto: "—", cont: p.cont ?? 0, puntosClima: p.puntos ?? 0, puntosFinales: (p.puntos ?? 0) - (0.4 * (p.cont ?? 0)) });
         return;
       }
-
-      const mesKey = monthKeys[mIdx]; 
+      const mesKey = monthKeys[mIdx];
       const mesTxt = monthLabel(mIdx);
 
       const item = rankByName.get(normName(p.producto));
-      if (!item) {
-        console.warn("[Ranking] Producto no encontrado en JSON:", p.producto);
-        rows.push({ producto: p.producto, mes: mesTxt, puesto: "—", puntosClima: p.puntos ?? 0, puntosFinales: p.puntos ?? 0 });
-        return;
-      }
+      const puesto = item?.ranking?.[mesKey] ?? "—";
+      const puestoNum = (puesto !== "—" && !Number.isNaN(Number(puesto))) ? Number(puesto) : 0;
 
-      const puesto = item?.ranking?.[mesKey] ?? null;
-      const puestoNum = puesto != null ? Number(puesto) : 0;
       const puntosClima = p.puntos ?? 0;
-      const puntosFinales = puntosClima + puestoNum;
+      const puntosCont = (p.cont ?? 0) * 0.4;
+      const puntosFinales = puntosClima + puestoNum - puntosCont;
 
-      rows.push({ producto: p.producto, mes: mesTxt, puesto: puesto ?? "—", puntosClima, puntosFinales });
+      rows.push({
+        producto: p.producto,
+        mes: mesTxt,
+        puesto: puesto,
+        cont: p.cont ?? 0,
+        puntosClima,
+        puntosFinales
+      });
     });
 
-    if (!rows.length) {
-      console.warn("[Ranking] No se generaron filas. rankData:", rankData.length, " merged:", merged.length);
-    }
     return rows;
   }, [merged, rankData, selectedDate]);
 
@@ -340,7 +339,6 @@ export default function Recomendacion() {
       if (r.producto && r.producto !== "TOTAL") finales[r.producto] = r.puntosFinales ?? 0;
     });
     try { localStorage.setItem("puntuacionesFinales", JSON.stringify(finales)); } catch {}
-    console.log("🏁 PUNTUACIONES FINALES (clima + puesto):", finales);
   }, [rankingRows]);
 
   // ── UI ──
@@ -360,6 +358,7 @@ export default function Recomendacion() {
             <thead style={{ background: "#f8fafc" }}>
               <tr>
                 <th style={th}>Producto</th>
+                <th style={th}>Contador</th>
                 <th style={th}>Fecha consulta (2024)</th>
                 <th style={th}>Temp prom (°C)</th>
                 <th style={th}>Mín / Máx (°C)</th>
@@ -373,7 +372,7 @@ export default function Recomendacion() {
                 <th style={th}>Humedad óptima (%)</th>
                 <th style={th}>¿Temp en rango?</th>
                 <th style={th}>¿Humedad en rango?</th>
-                <th style={th}>Puntuación (clima)</th>
+                <th style={th}>Puntos clima</th>
               </tr>
             </thead>
             <tbody>
@@ -382,6 +381,7 @@ export default function Recomendacion() {
                   <td style={tdBold}>{row.producto}</td>
                   {row.producto !== "TOTAL" ? (
                     <>
+                      <td style={td}>{row.cont ?? 0}</td>
                       <td style={td}>{row.date2024 || "—"}</td>
                       <td style={td}>{fmt(row.temp_avg_c)}</td>
                       <td style={td}>{fmt(row.temp_min_c)} / {fmt(row.temp_max_c)}</td>
@@ -414,10 +414,10 @@ export default function Recomendacion() {
       )}
 
       {/* ───────────────────────────────────────────── */}
-      {/* TABLA: Ranking mensual (Puntuacion.json) + puntos finales */}
+      {/* TABLA: Ranking mensual + puntos finales (ajuste por cont) */}
       {/* ───────────────────────────────────────────── */}
       <hr style={{ margin: "28px 0", opacity: 0.25 }} />
-      <h2 style={{ marginBottom: 8 }}>Ranking mensual por producto (Puntuacion.json)</h2>
+      <h2 style={{ marginBottom: 8 }}>Ranking mensual por producto (Puntuacion.json) + Puntaje final</h2>
       {rankLoading && <p>Cargando ranking…</p>}
       {rankErr && <p style={{ color: "crimson" }}>Error: {rankErr}</p>}
 
@@ -429,26 +429,46 @@ export default function Recomendacion() {
                 <th style={th}>Producto</th>
                 <th style={th}>Mes</th>
                 <th style={th}>Puesto</th>
+                <th style={th}>Contador</th>
                 <th style={th}>Puntos clima</th>
-                <th style={th}>Puntos finales (clima + puesto)</th>
+                <th style={th}>Penalización (0.4 × cont)</th>
+                <th style={th}>Puntos finales</th>
               </tr>
             </thead>
             <tbody>
-              {rankingRows.map((r) => (
-                <tr key={`${r.producto}-${r.mes}`} style={{ borderTop: "1px solid #f1f5f9" }}>
-                  <td style={tdBold}>{r.producto}</td>
-                  <td style={td}>{r.mes}</td>
-                  <td style={td}>{r.puesto}</td>
-                  <td style={td}>{r.puntosClima}</td>
-                  <td style={{ ...td, fontWeight: 700 }}>{r.puntosFinales}</td>
-                </tr>
-              ))}
+              {rankingRows.map((r) => {
+                const penal = (r.cont ?? 0) * 0.4;
+                return (
+                  <tr key={`${r.producto}-${r.mes}`} style={{ borderTop: "1px solid #f1f5f9" }}>
+                    <td style={tdBold}>{r.producto}</td>
+                    <td style={td}>{r.mes}</td>
+                    <td style={td}>{r.puesto}</td>
+                    <td style={td}>{r.cont ?? 0}</td>
+                    <td style={td}>{r.puntosClima}</td>
+                    <td style={td}>-{penal}</td>
+                    <td style={{ ...td, fontWeight: 700 }}>{r.puntosFinales}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       ) : (
         !rankLoading && <p style={{ color: "#6b7280" }}>No hay filas de ranking para mostrar aún.</p>
       )}
+
+      {/* ───────────────────────────────────────────── */}
+      {/* RESUMEN FINAL POR PRODUCTO */}
+      {/* ───────────────────────────────────────────── */}
+      <hr style={{ margin: "28px 0", opacity: 0.25 }} />
+      <h2 style={{ marginBottom: 8 }}>Puntaje final ajustado por contador</h2>
+      <div style={{ padding: "12px", border: "1px solid #e4e7ec", borderRadius: 8 }}>
+        {rankingRows.map(r => (
+          <div key={`final-${r.producto}`} style={{ margin: "4px 0" }}>
+            <strong>{r.producto}</strong>: {r.puntosFinales}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
