@@ -14,11 +14,12 @@ export default function Recomendacion() {
   const [prodErr, setProdErr] = useState("");
   const [muniData, setMuniData] = useState(null);
 
-
+  const [rankLoading, setRankLoading] = useState(false);
+  const [rankErr, setRankErr] = useState("");
+  const [rankData, setRankData] = useState([]);
   const dateCacheRef = useRef(new Map());            
   const lastHashRef = useRef("");             
   const inFlightRef = useRef(false);         
-
 
   const normalizeDate = (str) => {
     if (!str) return "";
@@ -42,6 +43,14 @@ export default function Recomendacion() {
   const fmt = (v, suf = "") => (v === null || v === undefined ? "—" : `${v}${suf}`);
   const inRange = (val, min, max) => (val == null || min == null || max == null) ? null : (val >= min && val <= max);
 
+  const normName = (s = "") => {
+    try {
+      return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
+    } catch {
+      return s.toLowerCase().trim();
+    }
+  };
+
   const fetchProductosMunicipio = async () => {
     if (!selectedMunicipio) return;
     try {
@@ -56,7 +65,6 @@ export default function Recomendacion() {
 
       found.productos.sort((a,b)=>a.producto.localeCompare(b.producto,"es"));
       setMuniData(found);
-
       const norm = normalizeDate(selectedDate);
       if (norm) {
         const d = new Date(`${norm}T12:00:00`);
@@ -74,7 +82,6 @@ export default function Recomendacion() {
       setProdLoading(false);
     }
   };
-
 
   const buildFechasHash = () => {
     let map = {};
@@ -107,8 +114,9 @@ export default function Recomendacion() {
       }
     }
     return { ok: false, error: lastErr || "Max retries reached" };
-    };
+  };
 
+  // pool de concurrencia
   const runWithConcurrency = async (items, worker, concurrency = 3) => {
     const results = new Array(items.length);
     let idx = 0;
@@ -124,6 +132,7 @@ export default function Recomendacion() {
     return results;
   };
 
+  // ── API 2024 optimizada ──
   const fetchBatch2024 = async () => {
     if (inFlightRef.current) return;             
     const place = selectedMunicipio;
@@ -132,7 +141,6 @@ export default function Recomendacion() {
     try {
       setBatchLoading(true); setBatchErr(""); setBatchResults([]);
       inFlightRef.current = true;
-
 
       let map = {};
       try { map = JSON.parse(localStorage.getItem("fechasCosecha") || "{}"); } catch { map = {}; }
@@ -180,7 +188,6 @@ export default function Recomendacion() {
 
   useEffect(() => { if (selectedMunicipio) fetchProductosMunicipio(); }, [selectedMunicipio, selectedDate]);
 
-
   useEffect(() => {
     const run = () => {
       let obj = {};
@@ -192,14 +199,41 @@ export default function Recomendacion() {
     const onStorage = (e) => { if (e.key === "fechasCosecha") run(); };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-
   }, [selectedMunicipio]);
+
+  useEffect(() => {
+    const loadRanking = async () => {
+      try {
+        setRankLoading(true); setRankErr(""); setRankData([]);
+        const res = await fetch("/Puntuacion.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error(`No pude cargar Puntuacion.json (HTTP ${res.status})`);
+        const json = await res.json();
+
+        const arr =
+          Array.isArray(json) ? json :
+          Array.isArray(json?.productos) ? json.productos :
+          Array.isArray(json?.data) ? json.data :
+          Array.isArray(json?.items) ? json.items :
+          [];
+
+        setRankData(arr);
+        console.log("[Puntuacion.json] cargados:", arr.length, "items");
+        if (arr.length) console.log("[Puntuacion.json] ejemplo:", arr[0]);
+      } catch (e) {
+        setRankErr(e.message);
+        console.error("[Puntuacion.json] error:", e);
+      } finally {
+        setRankLoading(false);
+      }
+    };
+    loadRanking();
+  }, []);
 
   const merged = useMemo(() => {
     if (!muniData) return [];
-    const apiByProd = new Map(batchResults.map(r => [r.producto?.toLowerCase(), r]));
+    const apiByProd = new Map(batchResults.map(r => [normName(r.producto), r]));
     const results = (muniData.productos || []).map(p => {
-      const r = apiByProd.get(p.producto?.toLowerCase());
+      const r = apiByProd.get(normName(p.producto));
       const m = r?.wx?.metrics || {};
       const tempAvg = m?.temp_avg_c;
       const hum = m?.humidity;
@@ -229,24 +263,87 @@ export default function Recomendacion() {
         hmax_opt: p.humedad_max,
         temp_ok,
         hum_ok,
-        puntos,
+        puntos, 
       };
     });
 
     const puntuaciones = {};
-    for (const r of results) {
-      puntuaciones[r.producto] = r.puntos;
-    }
+    for (const r of results) puntuaciones[r.producto] = r.puntos;
     try { localStorage.setItem("puntuacionesProductos", JSON.stringify(puntuaciones)); } catch {}
 
-    console.log("📊 PUNTUACIONES POR PRODUCTO:");
+    console.log("📊 PUNTUACIONES POR PRODUCTO (clima):");
     results.forEach(r => console.log(`   ${r.producto}: ${r.puntos}`));
     const total = results.reduce((acc, r) => acc + r.puntos, 0);
-    console.log("👉 TOTAL PUNTOS:", total);
+    console.log("👉 TOTAL PUNTOS (clima):", total);
 
     return [...results, { producto: "TOTAL", puntos: total }];
   }, [muniData, batchResults]);
 
+  const monthKeys = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const monthLabel = (idx) => monthKeys[idx] ? (monthKeys[idx][0].toUpperCase() + monthKeys[idx].slice(1)) : "—";
+
+  const getMonthIndexForProduct = (row) => {
+    const candidates = [row?.date2024, normalizeDate(selectedDate), toYMD(new Date())];
+    for (const ymd of candidates) {
+      if (ymd && /^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+        const dt = new Date(`${ymd}T00:00:00`);
+        if (!isNaN(dt)) return dt.getMonth(); 
+      }
+    }
+    return null;
+  };
+
+  const rankingRows = useMemo(() => {
+    const rows = [];
+    if (!rankData.length) return rows;
+
+    const rankByName = new Map(rankData.map(item => [normName(item.nombre), item]));
+    const products = merged.filter(r => r.producto !== "TOTAL");
+    if (!products.length) return rows;
+
+    products.forEach((p) => {
+      const mIdx = getMonthIndexForProduct(p);
+      if (mIdx == null) {
+        console.warn("[Ranking] Sin mes para", p.producto, { date2024: p.date2024, selectedDate });
+        rows.push({ producto: p.producto, mes: "—", puesto: "—", puntosClima: p.puntos ?? 0, puntosFinales: p.puntos ?? 0 });
+        return;
+      }
+
+      const mesKey = monthKeys[mIdx]; 
+      const mesTxt = monthLabel(mIdx);
+
+      const item = rankByName.get(normName(p.producto));
+      if (!item) {
+        console.warn("[Ranking] Producto no encontrado en JSON:", p.producto);
+        rows.push({ producto: p.producto, mes: mesTxt, puesto: "—", puntosClima: p.puntos ?? 0, puntosFinales: p.puntos ?? 0 });
+        return;
+      }
+
+      const puesto = item?.ranking?.[mesKey] ?? null;
+      const puestoNum = puesto != null ? Number(puesto) : 0;
+      const puntosClima = p.puntos ?? 0;
+      const puntosFinales = puntosClima + puestoNum;
+
+      rows.push({ producto: p.producto, mes: mesTxt, puesto: puesto ?? "—", puntosClima, puntosFinales });
+    });
+
+    if (!rows.length) {
+      console.warn("[Ranking] No se generaron filas. rankData:", rankData.length, " merged:", merged.length);
+    }
+    return rows;
+  }, [merged, rankData, selectedDate]);
+
+  useEffect(() => {
+    if (!rankingRows.length) return;
+    const finales = {};
+    rankingRows.forEach(r => {
+      if (r.producto && r.producto !== "TOTAL") finales[r.producto] = r.puntosFinales ?? 0;
+    });
+    try { localStorage.setItem("puntuacionesFinales", JSON.stringify(finales)); } catch {}
+    console.log("🏁 PUNTUACIONES FINALES (clima + puesto):", finales);
+  }, [rankingRows]);
+
+  // ── UI ──
   return (
     <div style={{ maxWidth: 1100, margin: "24px auto", padding: 16 }}>
       <h2 style={{ margin: 0 }}>Comparación clima (API 2024) vs rangos óptimos (BD)</h2>
@@ -276,7 +373,7 @@ export default function Recomendacion() {
                 <th style={th}>Humedad óptima (%)</th>
                 <th style={th}>¿Temp en rango?</th>
                 <th style={th}>¿Humedad en rango?</th>
-                <th style={th}>Puntuación</th>
+                <th style={th}>Puntuación (clima)</th>
               </tr>
             </thead>
             <tbody>
@@ -306,7 +403,7 @@ export default function Recomendacion() {
                     </>
                   ) : (
                     <td colSpan={14} style={{ ...td, fontWeight: 700, textAlign: "right" }}>
-                      TOTAL PUNTOS: {row.puntos}
+                      TOTAL PUNTOS (clima): {row.puntos}
                     </td>
                   )}
                 </tr>
@@ -314,6 +411,43 @@ export default function Recomendacion() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* ───────────────────────────────────────────── */}
+      {/* TABLA: Ranking mensual (Puntuacion.json) + puntos finales */}
+      {/* ───────────────────────────────────────────── */}
+      <hr style={{ margin: "28px 0", opacity: 0.25 }} />
+      <h2 style={{ marginBottom: 8 }}>Ranking mensual por producto (Puntuacion.json)</h2>
+      {rankLoading && <p>Cargando ranking…</p>}
+      {rankErr && <p style={{ color: "crimson" }}>Error: {rankErr}</p>}
+
+      {rankingRows.length > 0 ? (
+        <div style={{ overflowX: "auto", border: "1px solid #e4e7ec", borderRadius: 8 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead style={{ background: "#f8fafc" }}>
+              <tr>
+                <th style={th}>Producto</th>
+                <th style={th}>Mes</th>
+                <th style={th}>Puesto</th>
+                <th style={th}>Puntos clima</th>
+                <th style={th}>Puntos finales (clima + puesto)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rankingRows.map((r) => (
+                <tr key={`${r.producto}-${r.mes}`} style={{ borderTop: "1px solid #f1f5f9" }}>
+                  <td style={tdBold}>{r.producto}</td>
+                  <td style={td}>{r.mes}</td>
+                  <td style={td}>{r.puesto}</td>
+                  <td style={td}>{r.puntosClima}</td>
+                  <td style={{ ...td, fontWeight: 700 }}>{r.puntosFinales}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        !rankLoading && <p style={{ color: "#6b7280" }}>No hay filas de ranking para mostrar aún.</p>
       )}
     </div>
   );

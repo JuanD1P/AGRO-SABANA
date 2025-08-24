@@ -17,6 +17,313 @@
         "noviembre": 10,
         "diciembre": 7
       }
-    }
+    },
+    {
+      "id": 2,
+      "nombre": "Papa R12",
+      "ranking": {
+        "enero": 3,
+        "febrero": 2,
+        "marzo": 7,
+        "abril": 8,
+        "mayo": 10,
+        "junio": 11,
+        "julio": 12,
+        "agosto": 9,
+        "septiembre": 1,
+        "octubre": 4,
+        "noviembre": 5,
+        "diciembre": 6
+      }
+    },
+    {
+        "id": 3,
+        "nombre": "Papa sabanera",
+        "ranking": {
+            "enero": 3,
+            "febrero": 5,
+            "marzo": 6,
+            "abril": 7,
+            "mayo": 12,
+            "junio": 10,
+            "julio": 9,
+            "agosto": 11,
+            "septiembre": 8,
+            "octubre": 4,
+            "noviembre": 1,
+            "diciembre": 2
+        }
+    },
+    {
+        "id": 4,
+        "nombre": "Maíz amarillo",
+        "ranking": {
+            "enero": 4,
+            "febrero": 3,
+            "marzo": 1,
+            "abril": 2,
+            "mayo": 5,
+            "junio": 6,
+            "julio": 7,
+            "agosto": 8,
+            "septiembre": 12,
+            "octubre": 10,
+            "noviembre": 11,
+            "diciembre": 9
+        }
+    },
+    {
+        "id": 5,
+        "nombre": "Frijol cargamanto rojo",
+        "ranking": {
+            "enero": 4,
+            "febrero": 7,
+            "marzo": 1,
+            "abril": 6,
+            "mayo": 10,
+            "junio": 11,
+            "julio": 9,
+            "agosto": 12,
+            "septiembre": 8,
+            "octubre": 5,
+            "noviembre": 2,
+            "diciembre": 3
+        }
+    },
+    {
+        "id": 6,
+        "nombre": "Arveja verde en vaina",
+        "ranking": {
+            "enero": 8,
+            "febrero": 6,
+            "marzo": 5,
+            "abril": 9,
+            "mayo": 12,
+            "junio": 11,
+            "julio": 10,
+            "agosto": 4,
+            "septiembre": 2,
+            "octubre": 1,
+            "noviembre": 3,
+            "diciembre": 7
+        }
+        },
+        {
+        "id": 7,
+        "nombre": "Fresa",
+        "ranking": {
+            "enero": 1,
+            "febrero": 5,
+            "marzo": 6,
+            "abril": 3,
+            "mayo": 4,
+            "junio": 2,
+            "julio": 12,
+            "agosto": 7,
+            "septiembre": 9,
+            "octubre": 10,
+            "noviembre": 8,
+            "diciembre": 11
+        }
+        },
+        {
+        "id": 8,
+        "nombre": "Zanahoria",
+        "ranking": {
+            "enero": 5,
+            "febrero": 10,
+            "marzo": 12,
+            "abril": 8,
+            "mayo": 3,
+            "junio": 6,
+            "julio": 11,
+            "agosto": 9,
+            "septiembre": 4,
+            "octubre": 2,
+            "noviembre": 1,
+            "diciembre": 7
+        }
+    },
+    {
+        "id": 9,
+        "nombre": "Lechuga batavia",
+        "ranking": {
+            "enero": 7,
+            "febrero": 9,
+            "marzo": 12,
+            "abril": 10,
+            "mayo": 11,
+            "junio": 6,
+            "julio": 8,
+            "agosto": 4,
+            "septiembre": 2,
+            "octubre": 1,
+            "noviembre": 3,
+            "diciembre": 5
+        }
+        },
+        {
+        "id": 10,
+        "nombre": "Lechuga crespa",
+        "ranking": {
+            "enero": 5,
+            "febrero": 8,
+            "marzo": 12,
+            "abril": 10,
+            "mayo": 11,
+            "junio": 9,
+            "julio": 6,
+            "agosto": 1,
+            "septiembre": 2,
+            "octubre": 3,
+            "noviembre": 7,
+            "diciembre": 4
+        }
+        },
+        {
+        "id": 11,
+        "nombre": "Espinaca",
+        "ranking": {
+            "enero": 6,
+            "febrero": 5,
+            "marzo": 12,
+            "abril": 11,
+            "mayo": 7,
+            "junio": 4,
+            "julio": 2,
+            "agosto": 9,
+            "septiembre": 8,
+            "octubre": 3,
+            "noviembre": 1,
+            "diciembre": 10
+        }
+        },
+        {
+        "id": 12,
+        "nombre": "Coliflor",
+        "ranking": {
+            "enero": 10,
+            "febrero": 6,
+            "marzo": 8,
+            "abril": 12,
+            "mayo": 11,
+            "junio": 9,
+            "julio": 7,
+            "agosto": 5,
+            "septiembre": 2,
+            "octubre": 3,
+            "noviembre": 1,
+            "diciembre": 4
+        }
+        },
+        {
+        "id": 13,
+        "nombre": "Apio",
+        "ranking": {
+            "enero": 8,
+            "febrero": 10,
+            "marzo": 5,
+            "abril": 3,
+            "mayo": 4,
+            "junio": 2,
+            "julio": 9,
+            "agosto": 12,
+            "septiembre": 11,
+            "octubre": 7,
+            "noviembre": 1,
+            "diciembre": 6
+        }
+        },
+        {
+        "id": 14,
+        "nombre": "Ajo",
+        "ranking": {
+            "enero": 8,
+            "febrero": 6,
+            "marzo": 7,
+            "abril": 5,
+            "mayo": 11,
+            "junio": 10,
+            "julio": 9,
+            "agosto": 4,
+            "septiembre": 2,
+            "octubre": 1,
+            "noviembre": 3,
+            "diciembre": 12
+        }
+        },
+        {
+        "id": 15,
+        "nombre": "Uchuva",
+        "ranking": {
+            "enero": 9,
+            "febrero": 2,
+            "marzo": 1,
+            "abril": 8,
+            "mayo": 11,
+            "junio": 12,
+            "julio": 10,
+            "agosto": 6,
+            "septiembre": 5,
+            "octubre": 3,
+            "noviembre": 7,
+            "diciembre": 4
+        }
+        },
+        {
+        "id": 16,
+        "nombre": "Mora",
+        "ranking": {
+            "enero": 6,
+            "febrero": 5,
+            "marzo": 9,
+            "abril": 12,
+            "mayo": 11,
+            "junio": 7,
+            "julio": 8,
+            "agosto": 2,
+            "septiembre": 1,
+            "octubre": 3,
+            "noviembre": 4,
+            "diciembre": 10
+        }
+        },
+        {
+        "id": 17,
+        "nombre": "Tomate de árbol",
+        "ranking": {
+            "enero": 1,
+            "febrero": 9,
+            "marzo": 2,
+            "abril": 8,
+            "mayo": 11,
+            "junio": 12,
+            "julio": 10,
+            "agosto": 7,
+            "septiembre": 4,
+            "octubre": 5,
+            "noviembre": 6,
+            "diciembre": 3
+        }
+        },
+        {
+        "id": 18,
+        "nombre": "Aguacate",
+        "ranking": {
+            "enero": 2,
+            "febrero": 6,
+            "marzo": 8,
+            "abril": 12,
+            "mayo": 3,
+            "junio": 1,
+            "julio": 4,
+            "agosto": 7,
+            "septiembre": 10,
+            "octubre": 11,
+            "noviembre": 9,
+            "diciembre": 5
+        }
+        }
+
   ]
 }

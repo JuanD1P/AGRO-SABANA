@@ -1,214 +1,339 @@
-import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import { useEffect, useMemo, useRef, useState } from "react";
+import "./DOCSS/Top3.css";
 
-function parseFecha(str) {
-  if (!str) return null;
-  const s = String(str).trim();
+const API_BASE = "http://localhost:3000/openmeteo";
 
-  const ymd = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
-  if (ymd) {
-    const [, y, m, d] = ymd;
-    return new Date(Number(y), Number(m) - 1, Number(d), 12); 
-  }
+export default function Recomendacion() {
+  const [selectedMunicipio] = useState(() => localStorage.getItem("municipioSeleccionado") || "");
+  const [selectedDate] = useState(() => localStorage.getItem("fechaSeleccionada") || "");
 
-  const dmy = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/.exec(s);
-  if (dmy) {
-    const [, d, mo, y] = dmy;
-    return new Date(Number(y), Number(mo) - 1, Number(d), 12);
-  }
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [batchErr, setBatchErr] = useState("");
+  const [batchResults, setBatchResults] = useState([]);
 
-  const meses = {
-    enero:0, ene:0, febrero:1, feb:1, marzo:2, mar:2, abril:3, abr:3, mayo:4,
-    junio:5, jun:5, julio:6, jul:6, agosto:7, ago:7,
-    septiembre:8, setiembre:8, sept:8, sep:8,
-    octubre:9, oct:9, noviembre:10, nov:10, diciembre:11, dic:11
+  const [prodLoading, setProdLoading] = useState(false);
+  const [prodErr, setProdErr] = useState("");
+  const [muniData, setMuniData] = useState(null);
+
+  const [rankLoading, setRankLoading] = useState(false);
+  const [rankErr, setRankErr] = useState("");
+  const [rankData, setRankData] = useState([]);
+
+  const dateCacheRef = useRef(new Map());
+  const lastHashRef = useRef("");
+  const inFlightRef = useRef(false);
+
+  const normalizeDate = (str) => {
+    if (!str) return "";
+    const d = new Date(`${str}T00:00:00`);
+    if (isNaN(d)) return "";
+    const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, "0"), day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
   };
-  const r = /^(\d{1,2})\s*(?:de\s*)?([a-záéíóúñ\.]+)\s*(\d{4})?$/i.exec(s.toLowerCase().replace(/\./g,''));
-  if (r) {
-    const d = Number(r[1]);
-    const mes = meses[r[2]];
-    const y = r[3] ? Number(r[3]) : new Date().getFullYear();
-    if (mes != null) return new Date(y, mes, d, 12);
-  }
+  const toYear2024 = (ymd) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return "";
+    const [, , mm, dd] = ymd.match(/^(\d{4})-(\d{2})-(\d{2})$/) || [];
+    if (!mm || !dd) return "";
+    return (mm === "02" && dd === "29") ? "2024-02-28" : `2024-${mm}-${dd}`;
+  };
+  const toNoonLocal = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+  const addDays = (date, days) => { const b = toNoonLocal(date); const r = new Date(b); r.setDate(r.getDate() + Number(days)); return r; };
+  const toYMD = (date) => { if (!date) return ""; const y = date.getFullYear(), m = String(date.getMonth()+1).padStart(2,"0"), d = String(date.getDate()).padStart(2,"0"); return `${y}-${m}-${d}`; };
+  const inRange = (val, min, max) => (val == null || min == null || max == null) ? null : (val >= min && val <= max);
+  const normName = (s = "") => { try { return s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim(); } catch { return s.toLowerCase().trim(); } };
 
-  return null;
-}
+  const fetchProductosMunicipio = async () => {
+    if (!selectedMunicipio) return;
+    try {
+      setProdLoading(true); setProdErr(""); setMuniData(null);
+      const res = await fetch("http://localhost:3000/productos/municipios-productos", { credentials: "include" });
+      const json = await res.json();
+      if (!res.ok || !json?.ok) throw new Error(json?.error || "Error consultando productos");
 
-function toNoonLocal(date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
-}
+      const found = (json.data || []).find(m => m.municipio?.toLowerCase() === selectedMunicipio.toLowerCase());
+      if (!found) throw new Error(`No encontré datos para "${selectedMunicipio}".`);
 
-function addDays(date, days) {
-  const base = toNoonLocal(date);
-  const res = new Date(base);
-  res.setDate(res.getDate() + Number(days));
-  return res;
-}
+      found.productos.sort((a,b)=>a.producto.localeCompare(b.producto,"es"));
+      setMuniData(found);
+      const norm = normalizeDate(selectedDate);
+      if (norm) {
+        const d = new Date(`${norm}T12:00:00`);
+        const cosechas = {};
+        for (const p of found.productos) if (p?.ciclo_dias != null) cosechas[p.producto] = toYMD(addDays(d, p.ciclo_dias));
+        try { localStorage.setItem("fechasCosecha", JSON.stringify(cosechas)); } catch {}
+      }
+    } catch (e) {
+      setProdErr(e.message);
+    } finally {
+      setProdLoading(false);
+    }
+  };
 
-function fDate(date) {
-  if (!date) return "—";
-  return new Intl.DateTimeFormat("es-CO", {
-    timeZone: "America/Bogota",
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(date);
-}
+  const buildFechasHash = () => {
+    let map = {};
+    try { map = JSON.parse(localStorage.getItem("fechasCosecha") || "{}"); } catch {}
+    const entries = Object.entries(map).sort(([a],[b]) => a.localeCompare(b, "es"));
+    return `${selectedMunicipio}|` + entries.map(([k,v]) => `${k}:${v}`).join("|");
+  };
 
-function toYMD(date) {
-  if (!date) return "";
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
+  const fetchWithRetry = async (url, tries = 3) => {
+    let attempt = 0; let lastErr;
+    while (attempt < tries) {
+      try {
+        const res = await fetch(url);
+        const json = await res.json().catch(() => ({}));
+        if (res.ok) return { ok: true, json };
+        if (res.status === 429 || res.status >= 500) {
+          const ms = Math.min(1000 * (2 ** attempt), 4000);
+          await new Promise(r => setTimeout(r, ms));
+          attempt++; lastErr = json?.error || `HTTP ${res.status}`; continue;
+        }
+        return { ok: false, error: json?.error || `HTTP ${res.status}` };
+      } catch (e) {
+        const ms = Math.min(1000 * (2 ** attempt), 4000);
+        await new Promise(r => setTimeout(r, ms));
+        attempt++; lastErr = e.message || "Network error";
+      }
+    }
+    return { ok: false, error: lastErr || "Max retries reached" };
+  };
 
-function fmt(v, suf = "") {
-  if (v === null || v === undefined) return "—";
-  return `${v}${suf}`;
-}
+  const runWithConcurrency = async (items, worker, concurrency = 3) => {
+    const results = new Array(items.length); let idx = 0;
+    async function runner() { while (true) { const i = idx++; if (i >= items.length) break; results[i] = await worker(items[i], i); } }
+    const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => runner());
+    await Promise.all(workers);
+    return results;
+  };
 
-const Top3 = () => {
-  const [muni, setMuni] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const fetchBatch2024 = async () => {
+    if (inFlightRef.current) return;
+    if (!selectedMunicipio) return;
 
-  const selectedMunicipio = useMemo(() => {
-    try { return localStorage.getItem("municipioSeleccionado") || ""; } catch { return ""; }
-  }, []);
+    try {
+      setBatchLoading(true); setBatchErr(""); setBatchResults([]); inFlightRef.current = true;
 
-  const selectedFechaStr = useMemo(() => {
-    try { return localStorage.getItem("fechaSeleccionada") || ""; } catch { return ""; }
-  }, []);
+      let map = {}; try { map = JSON.parse(localStorage.getItem("fechasCosecha") || "{}"); } catch { map = {}; }
+      const entries = Object.entries(map);
+      if (!entries.length) throw new Error("No hay fechas de cosecha guardadas (localStorage['fechasCosecha']).");
 
-  const fechaSiembra = useMemo(() => parseFecha(selectedFechaStr), [selectedFechaStr]);
+      const prodToDate = entries.map(([producto, fecha]) => ({ producto, date2024: toYear2024(fecha) }));
+      const uniqueDates = Array.from(new Set(prodToDate.map(e => e.date2024).filter(Boolean)));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!selectedMunicipio) {
-        setError("No has seleccionado un municipio.");
-        setLoading(false);
+      const hash = buildFechasHash();
+      if (hash === lastHashRef.current && uniqueDates.every(d => dateCacheRef.current.has(d))) {
+        const out = prodToDate.map(({ producto, date2024 }) => {
+          const cached = dateCacheRef.current.get(date2024);
+          if (!cached) return { producto, date2024, wx: null, error: "Sin cache" };
+          return cached.ok ? { producto, date2024, wx: cached.json, error: "" } : { producto, date2024, wx: null, error: cached.error || "Error API" };
+        });
+        setBatchResults(out);
         return;
       }
 
-      try {
-        const res = await axios.get("http://localhost:3000/productos/municipios-productos", {
-          withCredentials: true,
-        });
-        if (!res.data?.ok) throw new Error("Respuesta inválida");
+      const toFetch = uniqueDates.filter(d => !dateCacheRef.current.has(d));
+      await runWithConcurrency(toFetch, async (d) => {
+        const url = `${API_BASE}/daily?place=${encodeURIComponent(selectedMunicipio)}&date=${d}`;
+        const res = await fetchWithRetry(url, 3);
+        dateCacheRef.current.set(d, res);
+      }, 3);
 
-        const found = (res.data.data || []).find(
-          m => m.municipio.toLowerCase() === selectedMunicipio.toLowerCase()
-        );
-        if (!found) {
-          setError(`No encontré datos para "${selectedMunicipio}".`);
-        } else {
-          found.productos.sort((a,b)=>a.producto.localeCompare(b.producto,"es"));
-          setMuni(found);
-        }
-      } catch (e) {
-        console.error(e);
-        setError("No se pudo cargar la información.");
-      } finally {
-        setLoading(false);
-      }
+      const results = prodToDate.map(({ producto, date2024 }) => {
+        const cached = dateCacheRef.current.get(date2024);
+        if (!cached) return { producto, date2024, wx: null, error: "Fecha inválida" };
+        return cached.ok ? { producto, date2024, wx: cached.json, error: "" } : { producto, date2024, wx: null, error: cached.error || "Error API" };
+      });
+      setBatchResults(results);
+      lastHashRef.current = hash;
+    } catch (e) {
+      setBatchErr(e.message);
+    } finally {
+      setBatchLoading(false);
+      inFlightRef.current = false;
+    }
+  };
+
+  useEffect(() => { if (selectedMunicipio) fetchProductosMunicipio(); }, [selectedMunicipio, selectedDate]);
+  useEffect(() => {
+    const run = () => {
+      let obj = {};
+      try { obj = JSON.parse(localStorage.getItem("fechasCosecha") || "{}"); } catch {}
+      if (selectedMunicipio && Object.keys(obj).length > 0) fetchBatch2024();
     };
-    fetchData();
+    run();
+    const onStorage = (e) => { if (e.key === "fechasCosecha") run(); };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, [selectedMunicipio]);
 
   useEffect(() => {
-    if (fechaSiembra && muni) {
-      const cosechas = {};
-      (muni.productos || []).forEach((p) => {
-        if (p?.ciclo_dias != null) {
-          const cosecha = addDays(fechaSiembra, p.ciclo_dias);
-          cosechas[p.producto] = toYMD(cosecha);
-        }
-      });
+    const loadRanking = async () => {
       try {
-        localStorage.setItem("fechasCosecha", JSON.stringify(cosechas));
-        console.log("[Top3] fechas de cosecha guardadas:", cosechas);
+        setRankLoading(true); setRankErr(""); setRankData([]);
+        const res = await fetch("/Puntuacion.json", { cache: "no-cache" });
+        if (!res.ok) throw new Error(`No pude cargar Puntuacion.json (HTTP ${res.status})`);
+        const json = await res.json();
+        const arr =
+          Array.isArray(json) ? json :
+          Array.isArray(json?.productos) ? json.productos :
+          Array.isArray(json?.data) ? json.data :
+          Array.isArray(json?.items) ? json.items :
+          [];
+        setRankData(arr);
       } catch (e) {
-        console.warn("[Top3] No se pudo guardar fechasCosecha en localStorage:", e);
+        setRankErr(e.message);
+      } finally {
+        setRankLoading(false);
+      }
+    };
+    loadRanking();
+  }, []);
+
+  const merged = useMemo(() => {
+    if (!muniData) return [];
+    const apiByProd = new Map(batchResults.map(r => [normName(r.producto), r]));
+    const results = (muniData.productos || []).map(p => {
+      const r = apiByProd.get(normName(p.producto));
+      const m = r?.wx?.metrics || {};
+      const tempAvg = m?.temp_avg_c;
+      const hum = m?.humidity;
+      const temp_ok = inRange(tempAvg, p.temp_min, p.temp_max);
+      const hum_ok = inRange(hum, p.humedad_min, p.humedad_max);
+
+      let puntos = 0;
+      if (temp_ok != null) puntos += temp_ok ? 3 : -3;
+      if (hum_ok != null) puntos += hum_ok ? 3 : -3;
+
+      return { producto: p.producto, date2024: r?.date2024 || "", puntos };
+    });
+
+    const puntuaciones = Object.fromEntries(results.map(r => [r.producto, r.puntos]));
+    try { localStorage.setItem("puntuacionesProductos", JSON.stringify(puntuaciones)); } catch {}
+
+    return results;
+  }, [muniData, batchResults]);
+
+
+  const monthKeys = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  const monthLabel = (idx) => monthKeys[idx] ? (monthKeys[idx][0].toUpperCase() + monthKeys[idx].slice(1)) : "—";
+  const getMonthIndexForProduct = (row) => {
+    const candidates = [row?.date2024, normalizeDate(selectedDate), toYMD(new Date())];
+    for (const ymd of candidates) {
+      if (ymd && /^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+        const dt = new Date(`${ymd}T00:00:00`);
+        if (!isNaN(dt)) return dt.getMonth();
       }
     }
-  }, [fechaSiembra, muni]);
+    return null;
+  };
 
-  if (loading) return <div style={{ padding: 16 }}>Cargando…</div>;
-  if (error) return <div style={{ padding: 16, color: "#b91c1c", background: "#fee2e2", borderRadius: 12 }}>{error}</div>;
-  if (!muni) return null;
+  const rankingRows = useMemo(() => {
+    if (!rankData.length || !merged.length) return [];
+    const rankByName = new Map(rankData.map(item => [normName(item.nombre), item]));
+    return merged.map((p) => {
+      const mIdx = getMonthIndexForProduct(p);
+      const mesKey = mIdx == null ? null : monthKeys[mIdx];
+      const mesTxt = mIdx == null ? "—" : monthLabel(mIdx);
+      const item = rankByName.get(normName(p.producto));
+      const puesto = mesKey && item ? item?.ranking?.[mesKey] : null;
+      const puestoNum = puesto != null ? Number(puesto) : 0;
+      const puntosClima = p.puntos ?? 0;
+      const puntosFinales = puntosClima + puestoNum; 
+      return { producto: p.producto, mes: mesTxt, puesto: puesto ?? "—", puntosClima, puntosFinales };
+    });
+  }, [merged, rankData, selectedDate]);
+
+
+  useEffect(() => {
+    if (!rankingRows.length) return;
+    const finales = Object.fromEntries(rankingRows.map(r => [r.producto, r.puntosFinales ?? 0]));
+    try {
+      localStorage.setItem("puntuacionesFinales", JSON.stringify(finales));
+      const top = Object.entries(finales).sort((a,b) => b[1] - a[1]).slice(0,3);
+      if (top[0]) localStorage.setItem("TOP1", `${top[0][0]}:${top[0][1]}`);
+      if (top[1]) localStorage.setItem("TOP2", `${top[1][0]}:${top[1][1]}`);
+      if (top[2]) localStorage.setItem("TOP3", `${top[2][0]}:${top[2][1]}`);
+    } catch {}
+  }, [rankingRows]);
+
+
+  const topCards = useMemo(() => {
+    if (rankingRows.length) {
+      return [...rankingRows]
+        .sort((a,b) => (b.puntosFinales ?? 0) - (a.puntosFinales ?? 0))
+        .slice(0,3)
+        .map(r => ({ producto: r.producto, puntos: r.puntosFinales }));
+    }
+    let finales = {};
+    try { finales = JSON.parse(localStorage.getItem("puntuacionesFinales") || "{}"); } catch {}
+    const arr = Object.entries(finales)
+      .map(([producto, puntos]) => ({ producto, puntos: Number(puntos) || 0 }))
+      .sort((a,b) => b.puntos - a.puntos)
+      .slice(0,3);
+    if (arr.length) return arr;
+    const read = (k) => {
+      const v = localStorage.getItem(k) || "";
+      const [prod, pts] = v.split(":");
+      return prod ? { producto: prod, puntos: Number(pts) || 0 } : null;
+    };
+    return [read("TOP1"), read("TOP2"), read("TOP3")].filter(Boolean);
+  }, [rankingRows]);
+
+  const isLoading = (batchLoading || prodLoading || rankLoading) && !(batchErr || prodErr || rankErr);
 
   return (
-    <div style={{ padding: 20, maxWidth: 1100, margin: "0 auto" }}>
-      <div
-        style={{
-          background: "linear-gradient(135deg, #1b2e22, #264734)",
-          color: "#e8f0ea",
-          borderRadius: 16,
-          padding: "18px 20px",
-          boxShadow: "0 10px 24px rgba(6,19,12,0.25)",
-          marginBottom: 16,
-        }}
-      >
-        <h2 style={{ margin: 0, fontSize: 24 }}>🌿 {muni.municipio}</h2>
-        <div style={{ fontSize: 13, opacity: 0.95, marginTop: 6 }}>
-          Siembra seleccionada: <strong>{selectedFechaStr || "—"}</strong>{" "}
-          {fechaSiembra && <span style={{ opacity: 0.9 }}>({fDate(fechaSiembra)})</span>}
+    <div className="top3x-root">
+      <div className="top3x-header">
+        <h2 className="top3x-title">Tops del mes</h2>
+        <div className="top3x-meta">
+          <span>Municipio:</span>
+          <strong>{selectedMunicipio || "—"}</strong>
+          <span className="top3x-dot">•</span>
+          <span>Siembra:</span>
+          <strong>{normalizeDate(selectedDate) || "—"}</strong>
         </div>
-        <div style={{ fontSize: 12, opacity: 0.85, marginTop: 4 }}>
-          Productos: {muni.productos.length}
-        </div>
+        {isLoading && (
+          <div className="top3x-loading">
+            <span className="top3x-spinner" />
+            <span>Cargando datos…</span>
+          </div>
+        )}
       </div>
 
-      <div style={{ overflowX: "auto", background: "#fff", border: "1px solid #e4e7ec", borderRadius: 14 }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead style={{ background: "#f8fafc" }}>
-            <tr>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Producto</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Ciclo (días)</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Temp. mín (°C)</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Temp. máx (°C)</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Humedad mín (%)</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Humedad máx (%)</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Fecha de siembra</th>
-              <th style={{ textAlign: "left", padding: "12px 14px", borderBottom: "1px solid #eaecef" }}>Fecha estimada de cosecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {muni.productos.map((p) => {
-              const ciclo = p.ciclo_dias;
-              const cosecha = (fechaSiembra && ciclo != null) ? addDays(fechaSiembra, ciclo) : null;
-
-              return (
-                <tr key={p.producto_id} style={{ borderTop: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "10px 14px" }}>{p.producto}</td>
-                  <td style={{ padding: "10px 14px" }}>{ciclo != null ? ciclo : "—"}</td>
-
-                  <td style={{ padding: "10px 14px" }}>{fmt(p.temp_min, "°C")}</td>
-                  <td style={{ padding: "10px 14px" }}>{fmt(p.temp_max, "°C")}</td>
-                  <td style={{ padding: "10px 14px" }}>{fmt(p.humedad_min, "%")}</td>
-                  <td style={{ padding: "10px 14px" }}>{fmt(p.humedad_max, "%")}</td>
-
-                  <td style={{ padding: "10px 14px" }}>
-                    {fechaSiembra ? fDate(fechaSiembra) : "—"}
-                  </td>
-                  <td style={{ padding: "10px 14px", fontWeight: 600 }}>
-                    {cosecha ? fDate(cosecha) : "—"}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {!fechaSiembra && (
-        <div style={{ marginTop: 12, fontSize: 12, color: "#64748b" }}>
-          Tip: guarda una fecha en <code>localStorage["fechaSeleccionada"]</code> (por ejemplo, <code>2025-09-30</code> o <code>30/09/2025</code>) para ver las fechas estimadas de cosecha.
-        </div>
+      {(batchErr || prodErr || rankErr) && (
+        <div className="top3x-error">{batchErr || prodErr || rankErr}</div>
       )}
+
+      <div className="top3x-grid">
+        {isLoading ? (
+          [0,1,2].map((i) => (
+            <div key={`sk-${i}`} className="top3x-card top3x-card--skeleton">
+              <div className="top3x-skel top3x-skel--sm" />
+              <div className="top3x-skel top3x-skel--badge" />
+              <div className="top3x-skel top3x-skel--lg" />
+              <div className="top3x-skel top3x-skel--md" />
+              <div className="top3x-skel top3x-skel--pill" />
+            </div>
+          ))
+        ) : topCards.length > 0 ? (
+          topCards.map((t, i) => (
+            <div
+              key={t.producto + i}
+              className={`top3x-card top3x-card--rank-${i+1}`}
+            >
+              <div className="top3x-rank">{i === 0 ? "TOP 1" : i === 1 ? "TOP 2" : "TOP 3"}</div>
+              <div className="top3x-medal" aria-hidden>{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</div>
+              <div className="top3x-product" title={t.producto}>{t.producto}</div>
+              <div className="top3x-points">
+                Puntos finales: <strong>{t.puntos}</strong>
+              </div>
+              <div className="top3x-glow" aria-hidden />
+            </div>
+          ))
+        ) : (
+          <div className="top3x-empty">No hay datos para calcular el Top 3 aún.</div>
+        )}
+      </div>
     </div>
   );
-};
-
-export default Top3;
+}

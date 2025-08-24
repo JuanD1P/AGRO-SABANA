@@ -32,7 +32,7 @@ const Login = () => {
             console.log("Respuesta del backend:", result.data);
     
             if (result.data.loginStatus) {
-                if (result.data.token) {  // Verificar que el token está presente
+                if (result.data.token) {  
                     localStorage.setItem('auth-token', result.data.token);
                 }
                 localStorage.setItem('user-role', result.data.role);
