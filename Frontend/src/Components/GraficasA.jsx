@@ -8,251 +8,200 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   LabelList,
+  Cell,
 } from "recharts";
 import "./DOCSS/GraficasA.css";
 
-const GraficasA = () => {
-  const [rows, setRows] = useState([]);
+axios.defaults.withCredentials = true;
+
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+  withCredentials: true,
+});
+
+export default function GraficasA() {
+  const [municipios, setMunicipios] = useState([]);
+  const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [openIds, setOpenIds] = useState(new Set());
-  const [q, setQ] = useState("");
-  const [selected, setSelected] = useState(null);
+  const [err, setErr] = useState("");
+  const [openSet, setOpenSet] = useState(() => new Set());
+  const [chartOpen, setChartOpen] = useState(false);
 
   useEffect(() => {
-    const fetchAll = async () => {
+    const load = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/productos/municipios-productos",
-          { withCredentials: true }
-        );
-        if (!res.data?.ok) throw new Error("Respuesta inválida");
-        setRows(res.data.data || []);
+        setLoading(true);
+        setErr("");
+        const [mRes, pRes] = await Promise.all([
+          api.get("/productos/municipios-productos"),
+          api.get("/productos/productos"),
+        ]);
+        if (!mRes.data?.ok || !pRes.data?.ok) throw new Error("Respuesta inválida");
+        // orden alfabético para mayor legibilidad
+        const muni = (mRes.data.data || [])
+          .map((x) => ({
+            ...x,
+            productos: [...(x.productos || [])].sort((a, b) =>
+              (a.producto || "").localeCompare(b.producto || "")
+            ),
+          }))
+          .sort((a, b) => a.municipio.localeCompare(b.municipio));
+        setMunicipios(muni);
+        setProductos((pRes.data.data || []).sort((a, b) => a.nombre.localeCompare(b.nombre)));
       } catch (e) {
         console.error(e);
-        setError("No se pudo cargar la información.");
+        setErr("No se pudo cargar la información.");
       } finally {
         setLoading(false);
       }
     };
-    fetchAll();
+    load();
   }, []);
 
-  const filtered = useMemo(() => {
-    if (!q.trim()) return rows;
-    const term = q.toLowerCase();
-    const match = (v) => String(v ?? "").toLowerCase().includes(term);
+  // Datos para la gráfica: producto vs interés (ordenado de mayor a menor)
+  const dataGraf = useMemo(() => {
+    const rows = (productos || []).map((p) => ({
+      producto: p.nombre,
+      valor: Number(p.cont || 0),
+    }));
+    rows.sort((a, b) => b.valor - a.valor || a.producto.localeCompare(b.producto));
+    return rows;
+  }, [productos]);
 
-    return rows
-      .map((m) => ({
-        ...m,
-        productos: (m.productos || []).filter(
-          (p) =>
-            match(p.producto) ||
-            match(p.ciclo_dias) ||
-            match(p.temp_min) ||
-            match(p.temp_max) ||
-            match(p.humedad_min) ||
-            match(p.humedad_max) ||
-            match(p.cont)
-        ),
-      }))
-      .filter((m) => match(m.municipio) || (m.productos || []).length > 0);
-  }, [rows, q]);
+  // escala de verdes pastel según intensidad
+  const maxVal = useMemo(
+    () => Math.max(1, ...dataGraf.map((d) => d.valor)),
+    [dataGraf]
+  );
+  const greenScale = (v) => {
+    const t = maxVal ? v / maxVal : 0; // 0..1
+    // De un verde muy suave a uno medio (pastel)
+    // rgba(16,185,129, alpha) -> emerald 500 con alpha variable
+    return `rgba(16,185,129, ${0.35 + t * 0.45})`;
+  };
 
-  const toggle = (id) => {
-    setOpenIds((prev) => {
+  const toggleMun = (id) =>
+    setOpenSet((prev) => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
-  };
 
-  const num = (v) => (v == null || v === "" ? 0 : Number(v));
+  // alto dinámico de la gráfica cuando esté abierta
+  const chartHeight = Math.min(900, Math.max(320, 38 * dataGraf.length + 80));
 
-  // Datos para gráficas
-  const cicloData = (p) => [{ name: "Ciclo", ciclo: num(p.ciclo_dias) }];
-  const temperaturaData = (p) => [
-    { name: "Temperatura", min: num(p.temp_min), max: num(p.temp_max) },
-  ];
-  const humedadData = (p) => [
-    { name: "Humedad", min: num(p.humedad_min), max: num(p.humedad_max) },
-  ];
-  const contadorData = (p) => [{ name: "Contador", cont: num(p.cont) }];
-
-  if (loading) return <div className="loading">Cargando…</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (loading) return <div className="gx2-state">Cargando…</div>;
+  if (err) return <div className="gx2-state gx2-error">{err}</div>;
 
   return (
-    <div className="graficasContainer">
-      <h2 className="pageTitle">🌱 Municipios y productos</h2>
-
-      <div className="searchRow">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Buscar municipio o producto…"
-          className="input"
-        />
-        <span className="mutedText">{filtered.length} municipios</span>
-      </div>
-
-      {filtered.length === 0 && <div className="mutedText">Sin resultados.</div>}
-
-      <div className="cardGrid">
-        {filtered.map((m) => {
-          const isOpen = openIds.has(m.municipio_id);
-          const totalCont = (m.productos || []).reduce(
-            (acc, p) => acc + (Number(p.cont) || 0),
-            0
-          );
-
-          return (
-            <div key={m.municipio_id} className="card">
-              <button onClick={() => toggle(m.municipio_id)} className="cardHeaderBtn">
-                <span>{m.municipio}</span>
-                <span className="mutedRow">
-                  <span>{(m.productos || []).length} productos</span>
-                  <span>∑ cont: {totalCont}</span>
-                </span>
-              </button>
-
-              {isOpen && (
-                <div className="tableWrapper">
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th>Producto</th>
-                        <th>Ciclo (días)</th>
-                        <th>Temp. mín</th>
-                        <th>Temp. máx</th>
-                        <th>Humedad mín</th>
-                        <th>Humedad máx</th>
-                        <th>Contador</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(m.productos || []).map((p, idx) => (
-                        <tr key={p.producto_id} className={idx % 2 ? "zebra" : ""}>
-                          <td>{p.producto ?? "—"}</td>
-                          <td>{p.ciclo_dias ?? "—"}</td>
-                          <td>{p.temp_min ?? "—"}</td>
-                          <td>{p.temp_max ?? "—"}</td>
-                          <td>{p.humedad_min ?? "—"}</td>
-                          <td>{p.humedad_max ?? "—"}</td>
-                          <td>{p.cont ?? 0}</td>
-                          <td>
-                            <button
-                              onClick={() => setSelected({ municipio: m.municipio, producto: p })}
-                              className="btnPrimary"
-                            >
-                              Ver gráficas
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Modal */}
-      {selected && (
-        <div role="dialog" aria-modal="true" onClick={() => setSelected(null)} className="backdrop">
-          <div onClick={(e) => e.stopPropagation()} className="modal">
-            <div className="modalHeader">
-              <div>
-                <div className="title">{selected.producto.producto}</div>
-                <div className="subtitle">Municipio: {selected.municipio}</div>
-              </div>
-              <button onClick={() => setSelected(null)} className="iconBtn">
-                ×
-              </button>
-            </div>
-
-            {/* Definición del contador */}
-            <div className="definitionBox">
-              <strong>Contador (índice de favorabilidad):</strong>{" "}
-              puntaje asignado a cada cultivo que combina:
-              clima y humedad en rangos óptimos para el cultivo, y la demanda
-              estimada del producto por persona. Un valor más alto indica
-              mejores condiciones y oportunidad de siembra.
-            </div>
-
-            <div className="chartsGrid">
-              <ChartCard title="Ciclo de días">
-                <MiniBar
-                  data={cicloData(selected.producto)}
-                  bars={[{ key: "ciclo", name: "Días de ciclo", fill: "var(--brand-600)" }]}
-                />
-              </ChartCard>
-
-              <ChartCard title="Temperatura (°C)">
-                <MiniBar
-                  data={temperaturaData(selected.producto)}
-                  bars={[
-                    { key: "min", name: "Mín", fill: "var(--orange-500)" },
-                    { key: "max", name: "Máx", fill: "var(--red-500)" },
-                  ]}
-                />
-              </ChartCard>
-
-              <ChartCard title="Humedad relativa (%)">
-                <MiniBar
-                  data={humedadData(selected.producto)}
-                  bars={[
-                    { key: "min", name: "Mín", fill: "var(--teal-500)" },
-                    { key: "max", name: "Máx", fill: "var(--brand-500)" },
-                  ]}
-                />
-              </ChartCard>
-
-              {/* NUEVA: Contador */}
-              <ChartCard title="Contador (índice)">
-                <MiniBar
-                  data={contadorData(selected.producto)}
-                  bars={[{ key: "cont", name: "Índice", fill: "var(--violet-500)" }]}
-                />
-              </ChartCard>
-            </div>
+    <div className="gx2-page">
+      {/* ===== 1) MUNICIPIOS → PRODUCTOS (ACORDEÓN) ===== */}
+      <section className="gx2-section glass">
+        <header className="gx2-head">
+          <h2 className="gx2-title">Municipios y productos</h2>
+          <div className="gx2-chips">
+            <span className="gx2-chip">{municipios.length} municipios</span>
+            <span className="gx2-chip">{productos.length} productos en total</span>
           </div>
+        </header>
+
+        <div className="gx2-accordGrid">
+          {municipios.map((m) => {
+            const open = openSet.has(m.municipio_id);
+            return (
+              <article key={m.municipio_id} className={`gx2-acc ${open ? "open" : ""}`}>
+                <button className="gx2-accHead" onClick={() => toggleMun(m.municipio_id)}>
+                  <div className="gx2-accLeft">
+                    <span className="gx2-arrow" aria-hidden>▸</span>
+                    <h3 className="gx2-muni">{m.municipio}</h3>
+                  </div>
+                  <span className="gx2-count">{m.productos.length} productos</span>
+                </button>
+                <div className="gx2-accBody">
+                  {m.productos.length ? (
+                    <ul className="gx2-tags">
+                      {m.productos.map((p) => (
+                        <li key={p.producto_id} className="gx2-tag">{p.producto}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="gx2-empty">Sin productos</div>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
-      )}
+      </section>
+
+      {/* ===== 2) LISTA DE PRODUCTOS + BOTÓN PARA MOSTRAR GRÁFICA ===== */}
+      <section className="gx2-section glass">
+        <header className="gx2-head">
+          <h2 className="gx2-title">Interés por producto</h2>
+          <p className="gx2-note">
+            Aquí ves, para cada cultivo, cuántas personas han mostrado interés en sembrarlo.
+            Ese interés se usa para comparar y priorizar qué productos impulsar.
+          </p>
+        </header>
+
+        {/* listado compacto: Producto — Interés */}
+        <div className="gx2-list">
+          {productos.map((p) => (
+            <div key={p.id} className="gx2-row">
+              <span className="gx2-dot" />
+              <span className="gx2-name">{p.nombre}</span>
+              <span className="gx2-val">{Number(p.cont || 0)}</span>
+            </div>
+          ))}
+          {!productos.length && <div className="gx2-emptyList">No hay productos.</div>}
+        </div>
+
+        <div className="gx2-chartToggle">
+          <button
+            className="gx2-btn"
+            onClick={() => setChartOpen((s) => !s)}
+            aria-expanded={chartOpen}
+          >
+            {chartOpen ? "Ocultar gráfica" : "Ver gráfica"}
+          </button>
+        </div>
+
+        <div
+          className={`gx2-chartWrap ${chartOpen ? "open" : ""}`}
+          style={{ maxHeight: chartOpen ? chartHeight : 0 }}
+          aria-hidden={!chartOpen}
+        >
+          {chartOpen && (
+            <ResponsiveContainer width="100%" height={chartHeight}>
+              <BarChart
+                data={dataGraf}
+                layout="vertical"
+                margin={{ top: 8, right: 16, left: 16, bottom: 8 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" allowDecimals={false} />
+                <YAxis
+                  type="category"
+                  dataKey="producto"
+                  width={200}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(v) => [`${v}`, "Interés"]}
+                  labelFormatter={(l) => `Producto: ${l}`}
+                />
+                <Bar dataKey="valor" name="Interés" radius={[10, 10, 10, 10]}>
+                  {dataGraf.map((d, i) => (
+                    <Cell key={i} fill={greenScale(d.valor)} />
+                  ))}
+                  <LabelList dataKey="valor" position="right" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
+      </section>
     </div>
   );
-};
-
-const MiniBar = ({ data, bars }) => (
-  <div style={{ width: "100%", height: 170 }}>
-    <ResponsiveContainer>
-      <BarChart data={data} margin={{ top: 6, right: 10, left: 2, bottom: 6 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        {bars.map((b) => (
-          <Bar key={b.key} dataKey={b.key} name={b.name} fill={b.fill} radius={[8, 8, 0, 0]}>
-            <LabelList dataKey={b.key} position="top" />
-          </Bar>
-        ))}
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-);
-
-const ChartCard = ({ title, children }) => (
-  <div className="chartCard">
-    <div className="chartTitle">{title}</div>
-    {children}
-  </div>
-);
-
-export default GraficasA;
+}

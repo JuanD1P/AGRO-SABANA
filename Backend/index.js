@@ -3,7 +3,7 @@ import cors from 'cors';
 import { userRouter } from './Routes/usuariosR.js';
 import { productosRouter } from './Routes/Productos.js';
 import cookieParser from 'cookie-parser';
-import { openmeteoRouter } from './Routes/openmeteo.js'; // <-- NUEVO
+import { openmeteoRouter } from './Routes/openmeteo.js'; 
 
 const app = express();
 app.use(cors({

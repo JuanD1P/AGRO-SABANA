@@ -1,207 +1,154 @@
-:root {
-  --brand-900: #0f3d2e;
-  --brand-700: #165a44;
-  --brand-600: #1a6b52;
-  --brand-500: #27a46f;
-  --brand-100: #e9f5ee;
-  --muted-600: #64748b;
-  --border: #e5e7eb;
+:root{
+  --bg: #edf2f7;
+  --text: #0f172a;
+  --muted: #64748b;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 18px 50px rgba(2,6,23,.10);
 
-  --orange-500: #f59e0b;
-  --red-500: #ef4444;
-  --teal-500: #14b8a6;
-  --violet-500: #7c3aed; /* para la gráfica de Contador */
+  /* verdes pastel */
+  --sprout-50:#ecfdf5;
+  --sprout-100:#d1fae5;
+  --sprout-200:#a7f3d0;
+  --sprout-300:#6ee7b7;
+  --sprout-400:#34d399;
+  --sprout-500:#10b981;
+  --sprout-600:#059669;
 }
 
-.graficasContainer {
-  padding: 16px;
+*{ box-sizing: border-box; }
+.gx2-page{
   max-width: 1100px;
   margin: 0 auto;
+  padding: 22px;
+  color: var(--text);
+  background:
+    radial-gradient(80% 60% at -10% -10%, #e8fff6 0%, transparent 60%),
+    radial-gradient(70% 60% at 110% 0%, #f0fff4 0%, transparent 60%),
+    var(--bg);
 }
 
-.pageTitle {
-  margin-bottom: 8px;
-  color: var(--brand-900);
+.gx2-section{
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 22px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.glass{
+  background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
-.searchRow {
-  display: flex;
+.gx2-head{
+  display: grid;
   gap: 8px;
-  align-items: center;
+  grid-template-columns: 1fr auto;
+  align-items: start;
   margin-bottom: 12px;
 }
+.gx2-title{ margin:0; font-size:1.25rem; font-weight:900; }
+.gx2-chips{ display:flex; gap:8px; }
+.gx2-chip{
+  background:#f1f5f9; border:1px solid var(--border);
+  border-radius:9999px; padding:6px 12px; font-weight:800; font-size:.85rem;
+}
+.gx2-note{ grid-column: 1 / -1; margin:2px 0 0; color:var(--muted); font-weight:600; }
 
-.input {
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  outline: none;
+/* ===== acordeones municipios ===== */
+.gx2-accordGrid{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas para orden visual */
+  gap:12px;
+}
+@media (max-width: 860px){ .gx2-accordGrid{ grid-template-columns: 1fr; } }
+
+.gx2-acc{
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#fff;
+  overflow:hidden;
+  transition: box-shadow .18s ease;
+}
+.gx2-acc.open{ box-shadow: 0 10px 26px rgba(2,6,23,.12); }
+
+.gx2-accHead{
+  width:100%; display:flex; align-items:center; justify-content:space-between;
+  gap:10px; padding:12px 14px; background: var(--sprout-50); border:0; cursor:pointer;
+}
+.gx2-accLeft{ display:flex; align-items:center; gap:10px; }
+.gx2-arrow{ display:inline-block; transform: rotate(0deg); transition: transform .2s ease; color:var(--sprout-600); }
+.gx2-acc.open .gx2-arrow{ transform: rotate(90deg); }
+.gx2-muni{ margin:0; font-size:1rem; font-weight:900; }
+.gx2-count{
+  background:#eef2f7; border:1px solid var(--border);
+  border-radius:9999px; padding:4px 10px; font-weight:800; font-size:.78rem; color:#334155;
 }
 
-.mutedText {
-  font-size: 12px;
-  color: var(--muted-600);
+.gx2-accBody{
+  padding: 12px 14px 14px;
+  border-top:1px dashed var(--border);
+}
+.gx2-tags{
+  list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:8px;
+}
+.gx2-tag{
+  background:linear-gradient(180deg, #ffffff, #f0fdf4);
+  color:#083344;
+  border:1px solid #d1fae5;
+  border-radius:9999px; padding:6px 10px;
+  font-weight:800; font-size:.86rem;
 }
 
-.cardGrid {
-  display: grid;
-  gap: 10px;
+/* ===== lista productos ===== */
+.gx2-list{ display:grid; grid-template-columns: 1fr; gap:8px; margin-top:2px; }
+.gx2-row{
+  display:grid; grid-template-columns: 22px 1fr auto;
+  align-items:center; gap:8px;
+  background:#fafafa; border:1px solid var(--border);
+  border-radius:12px; padding:8px 10px;
+}
+.gx2-dot{
+  width:10px; height:10px; border-radius:50%;
+  background: var(--sprout-300);
+  box-shadow: 0 0 0 2px #fff inset;
+}
+.gx2-name{ font-weight:900; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gx2-val{
+  min-width:34px; text-align:right; font-weight:900;
+  background:var(--sprout-100); color:#065f46;
+  border:1px solid #bbf7d0; border-radius:9999px; padding:4px 10px;
 }
 
-.card {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  background: #fff;
+/* botón ver gráfica */
+.gx2-chartToggle{ margin-top:12px; display:flex; justify-content:center; }
+.gx2-btn{
+  border:1px solid #bbf7d0; color:#065f46; font-weight:900;
+  background: linear-gradient(180deg, #ecfdf5, #dcfce7);
+  border-radius:9999px; padding:10px 16px; cursor:pointer;
 }
+.gx2-btn:hover{ filter: brightness(.98); }
 
-.cardHeaderBtn {
-  width: 100%;
-  text-align: left;
-  background: #fff;
-  border: none;
-  padding: 14px 16px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 700;
-  color: var(--brand-900);
+/* wrapper colapsable de la gráfica */
+.gx2-chartWrap{
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#fff;
+  box-shadow: var(--shadow);
+  margin-top:12px;
+  transition: max-height .35s ease, opacity .25s ease, padding .25s ease;
+  padding: 0 8px; opacity: 0;
 }
+.gx2-chartWrap.open{ opacity: 1; padding: 8px; }
 
-.mutedRow {
-  font-size: 12px;
-  color: var(--muted-600);
-  display: flex;
-  gap: 12px;
+/* estados */
+.gx2-state{
+  max-width: 900px; margin: 40px auto;
+  background:#fff; border:1px solid var(--border);
+  border-radius:14px; padding:14px; text-align:center; font-weight:900;
+  box-shadow: var(--shadow);
 }
-
-.tableWrapper {
-  padding: 0 16px 12px 16px;
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 860px;
-}
-
-.table thead th {
-  text-align: left;
-  padding: 10px 8px;
-  background: var(--brand-100);
-  color: var(--brand-700);
-  border-bottom: 1px solid var(--border);
-  font-weight: 700;
-}
-
-.table tbody td {
-  padding: 8px 8px;
-  border-top: 1px solid #f2f4f7;
-}
-
-.table tbody tr:hover {
-  background: #f8fdfb;
-}
-
-.zebra {
-  background: #fafafa;
-}
-
-.btnPrimary {
-  padding: 6px 10px;
-  border-radius: 10px;
-  border: 1px solid var(--brand-500);
-  background: var(--brand-500);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 600;
-}
-.btnPrimary:hover { background: var(--brand-600); }
-
-/* Modal */
-.backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.38);
-  display: grid;
-  place-items: center;
-  padding: 12px;
-  z-index: 50;
-}
-
-.modal {
-  width: min(900px, 96vw);
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
-  max-height: 92vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.modalHeader {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  background: white;
-  z-index: 1;
-}
-
-.iconBtn {
-  border: none;
-  background: transparent;
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 6px;
-  color: var(--brand-700);
-}
-
-.title { font-weight: 800; color: var(--brand-900); }
-.subtitle { font-size: 12px; color: var(--muted-600); }
-
-/* Definición del contador */
-.definitionBox{
-  margin: 10px 12px 0;
-  padding: 10px 12px;
-  background: #fafaff;
-  border: 1px solid #ecebff;
-  border-radius: 12px;
-  color: #372f6b;
-  font-size: 14px;
-}
-
-/* Grid de gráficas */
-.chartsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 12px;
-  padding: 12px;
-  overflow: auto;
-}
-
-.chartCard {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 10px;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-}
-
-.chartTitle {
-  font-weight: 700;
-  margin: 2px 4px 8px;
-  color: var(--brand-900);
-}
-
-.loading { padding: 16px; }
-.error   { padding: 16px; color: red; }
+.gx2-error{ color:#b91c1c; }
