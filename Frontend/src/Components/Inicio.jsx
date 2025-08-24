@@ -13,7 +13,7 @@ import Slide6 from "../ImagenesP/ImagenesInicio/Elrosal.jpg";
 import Slide7 from "../ImagenesP/ImagenesInicio/Subachoque.jpeg";
 import Slide8 from "../ImagenesP/ImagenesInicio/Zipacon.jpg";
 
-/* ---------- GALERÍA (hover‑swap) ---------- */
+/* ---------- GALERÍA  ---------- */
 import CultivoA from "../ImagenesP/ImagenesInicio/CultivoA.jpeg";
 import CultivoB from "../ImagenesP/ImagenesInicio/CultivoB.jpg";
 import PaisajeA from "../ImagenesP/ImagenesInicio/PaisajeA.jpg";

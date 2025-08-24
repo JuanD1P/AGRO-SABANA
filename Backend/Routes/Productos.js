@@ -10,7 +10,7 @@ function verifyToken(req, res, next) {
     if (!token) return res.status(401).json({ ok: false, error: 'No token' });
 
     const payload = jwt.verify(token, 'jwt_secret_key');
-    req.user = payload;
+    req.user = payload; 
     next();
   } catch (err) {
     return res.status(401).json({ ok: false, error: 'Token inválido' });
@@ -28,7 +28,8 @@ router.get('/municipios-productos', verifyToken, (req, res) => {
       p.temp_min    AS temp_min,
       p.temp_max    AS temp_max,
       p.humedad_min AS humedad_min,
-      p.humedad_max AS humedad_max
+      p.humedad_max AS humedad_max,
+      p.cont        AS cont
     FROM municipio m
     JOIN municipio_producto mp ON mp.municipio_id = m.id
     JOIN producto p           ON p.id = mp.producto_id
@@ -58,6 +59,7 @@ router.get('/municipios-productos', verifyToken, (req, res) => {
         temp_max: r.temp_max,
         humedad_min: r.humedad_min,
         humedad_max: r.humedad_max,
+        cont: r.cont ?? 0, // 👈 aquí va
       });
     }
 
@@ -70,7 +72,8 @@ router.get('/flat', verifyToken, (req, res) => {
     SELECT 
       m.id AS municipio_id, m.nombre AS municipio,
       p.id AS producto_id,  p.nombre AS producto,
-      p.ciclo_dias, p.temp_min, p.temp_max, p.humedad_min, p.humedad_max
+      p.ciclo_dias, p.temp_min, p.temp_max, p.humedad_min, p.humedad_max,
+      p.cont AS cont
     FROM municipio m
     JOIN municipio_producto mp ON mp.municipio_id = m.id
     JOIN producto p           ON p.id = mp.producto_id
@@ -85,24 +88,59 @@ router.get('/flat', verifyToken, (req, res) => {
   });
 });
 
-/* -------------------- */
-// Listar todos los productos
-router.get('/productos', verifyToken, (req, res) => {
-  con.query(
-    'SELECT id, nombre, ciclo_dias, temp_min, temp_max, humedad_min, humedad_max FROM producto ORDER BY nombre',
-    (err, rows) => {
-      if (err) return res.status(500).json({ ok: false, error: 'DB error' });
-      res.json({ ok: true, data: rows });
-    }
-  );
-});
 
-// Listar todos los municipios
-router.get('/municipios', verifyToken, (req, res) => {
-  con.query('SELECT id, nombre FROM municipio ORDER BY nombre', (err, rows) => {
+
+router.get('/productos', verifyToken, (req, res) => {
+  const sql = `
+    SELECT id, nombre, ciclo_dias, temp_min, temp_max, humedad_min, humedad_max, cont
+    FROM producto
+    ORDER BY nombre
+  `;
+  con.query(sql, (err, rows) => {
     if (err) return res.status(500).json({ ok: false, error: 'DB error' });
     res.json({ ok: true, data: rows });
   });
+});
+
+
+router.post('/init-cont', verifyToken, (req, res) => {
+  if (req?.user?.rol !== 'ADMIN') {
+    return res.status(403).json({ ok: false, error: 'Solo ADMIN puede inicializar cont' });
+  }
+
+  const sql = `UPDATE producto SET cont = FLOOR(1 + (RAND() * 5))`;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.error('Error inicializando cont:', err);
+      return res.status(500).json({ ok: false, error: 'DB error al inicializar cont' });
+    }
+    res.json({ ok: true, affectedRows: result?.affectedRows ?? 0 });
+  });
+});
+
+
+router.patch('/productos/:id/cont', verifyToken, (req, res) => {
+  if (req?.user?.rol !== 'ADMIN') {
+    return res.status(403).json({ ok: false, error: 'Solo ADMIN puede actualizar cont' });
+  }
+
+  const id = Number(req.params.id);
+  const { cont } = req.body || {};
+  if (!Number.isInteger(id) || !Number.isFinite(cont)) {
+    return res.status(400).json({ ok: false, error: 'Parámetros inválidos' });
+  }
+
+  con.query(
+    'UPDATE producto SET cont = ? WHERE id = ?',
+    [cont, id],
+    (err, result) => {
+      if (err) {
+        console.error('Error actualizando cont:', err);
+        return res.status(500).json({ ok: false, error: 'DB error' });
+      }
+      res.json({ ok: true, affectedRows: result?.affectedRows ?? 0 });
+    }
+  );
 });
 
 export const productosRouter = router;
