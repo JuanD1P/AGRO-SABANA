@@ -1,0 +1,308 @@
+[
+  {
+    "producto": "Papa Criolla",
+    "datos": [
+      { "puntos": 1, "mes": "Septiembre", "precio_min": 2200, "precio_max": 3600, "precio_promedio": 2900, "tendencia": "ALTO" },
+      { "puntos": 2, "mes": "Enero", "precio_min": 2600, "precio_max": 3600, "precio_promedio": 3100, "tendencia": "BAJO" },
+      { "puntos": 3, "mes": "Febrero", "precio_min": 2800, "precio_max": 3600, "precio_promedio": 3200, "tendencia": "BAJO" },
+      { "puntos": 4, "mes": "Agosto", "precio_min": 2200, "precio_max": 4600, "precio_promedio": 3400, "tendencia": "BAJO" },
+      { "puntos": 5, "mes": "Marzo", "precio_min": 2800, "precio_max": 3600, "precio_promedio": 3200, "tendencia": "ALTO" },
+      { "puntos": 6, "mes": "Octubre", "precio_min": 3200, "precio_max": 4600, "precio_promedio": 3900, "tendencia": "ALTO" },
+      { "puntos": 7, "mes": "Diciembre", "precio_min": 2800, "precio_max": 5000, "precio_promedio": 3900, "tendencia": "NEUTRO" },
+      { "puntos": 8, "mes": "Abril", "precio_min": 3200, "precio_max": 5200, "precio_promedio": 4200, "tendencia": "ALTO" },
+      { "puntos": 9, "mes": "Julio", "precio_min": 3600, "precio_max": 6400, "precio_promedio": 5000, "tendencia": "BAJO" },
+      { "puntos": 10, "mes": "Noviembre", "precio_min": 4000, "precio_max": 6000, "precio_promedio": 5000, "tendencia": "NEUTRO" },
+      { "puntos": 11, "mes": "Junio", "precio_min": 4200, "precio_max": 8100, "precio_promedio": 6100, "tendencia": "NEUTRO" },
+      { "puntos": 12, "mes": "Mayo", "precio_min": 5000, "precio_max": 8000, "precio_promedio": 6500, "tendencia": "ALTO" }
+    ]
+  },
+  {
+    "producto": "Papa R12",
+    "datos": [
+      { "puntos": 1, "mes": "Septiembre", "precio_min": 1400, "precio_max": 1500, "precio_promedio": 1450, "tendencia": "BAJO" },
+      { "puntos": 2, "mes": "Febrero", "precio_min": 1300, "precio_max": 1600, "precio_promedio": 1450, "tendencia": "NEUTRO" },
+      { "puntos": 3, "mes": "Enero", "precio_min": 1200, "precio_max": 1800, "precio_promedio": 1500, "tendencia": "BAJO" },
+      { "puntos": 4, "mes": "Octubre", "precio_min": 1400, "precio_max": 1600, "precio_promedio": 1500, "tendencia": "ALTO" },
+      { "puntos": 5, "mes": "Noviembre", "precio_min": 1400, "precio_max": 1900, "precio_promedio": 1650, "tendencia": "ALTO" },
+      { "puntos": 6, "mes": "Diciembre", "precio_min": 1600, "precio_max": 2100, "precio_promedio": 1850, "tendencia": "NEUTRO" },
+      { "puntos": 7, "mes": "Marzo", "precio_min": 1400, "precio_max": 2000, "precio_promedio": 1700, "tendencia": "ALTO" },
+      { "puntos": 8, "mes": "Abril", "precio_min": 1700, "precio_max": 3000, "precio_promedio": 2350, "tendencia": "ALTO" },
+      { "puntos": 9, "mes": "Agosto", "precio_min": 2000, "precio_max": 3200, "precio_promedio": 2600, "tendencia": "BAJO" },
+      { "puntos": 10, "mes": "Mayo", "precio_min": 2000, "precio_max": 3200, "precio_promedio": 2700, "tendencia": "NEUTRO" },
+      { "puntos": 11, "mes": "Junio", "precio_min": 2200, "precio_max": 3200, "precio_promedio": 2700, "tendencia": "NEUTRO" },
+      { "puntos": 12, "mes": "Julio", "precio_min": 2400, "precio_max": 3800, "precio_promedio": 3100, "tendencia": "BAJO" }
+    ]
+  },
+  {
+    "producto": "Papa Sabanera",
+    "datos": [
+      { "puntos": 1, "mes": "Noviembre", "precio_min": 2000, "precio_max": 3000, "precio_promedio": 2500, "tendencia": "BAJO" },
+      { "puntos": 2, "mes": "Diciembre", "precio_min": 2200, "precio_max": 3000, "precio_promedio": 2600, "tendencia": "NEUTRO" },
+      { "puntos": 3, "mes": "Enero", "precio_min": 2800, "precio_max": 3200, "precio_promedio": 3000, "tendencia": "BAJO" },
+      { "puntos": 4, "mes": "Octubre", "precio_min": 2400, "precio_max": 3600, "precio_promedio": 3000, "tendencia": "BAJO" },
+      { "puntos": 5, "mes": "Febrero", "precio_min": 3000, "precio_max": 3400, "precio_promedio": 3200, "tendencia": "NEUTRO" },
+      { "puntos": 6, "mes": "Marzo", "precio_min": 3200, "precio_max": 4200, "precio_promedio": 3700, "tendencia": "ALTO" },
+      { "puntos": 7, "mes": "Abril", "precio_min": 3600, "precio_max": 5000, "precio_promedio": 4300, "tendencia": "ALTO" },
+      { "puntos": 8, "mes": "Septiembre", "precio_min": 3200, "precio_max": 6600, "precio_promedio": 4900, "tendencia": "BAJO" },
+      { "puntos": 9, "mes": "Julio", "precio_min": 4000, "precio_max": 6400, "precio_promedio": 5200, "tendencia": "BAJO" },
+      { "puntos": 10, "mes": "Junio", "precio_min": 4800, "precio_max": 6000, "precio_promedio": 5400, "tendencia": "MEDIO" },
+      { "puntos": 11, "mes": "Agosto", "precio_min": 4400, "precio_max": 6400, "precio_promedio": 5400, "tendencia": "ALTO" },
+      { "puntos": 12, "mes": "Mayo", "precio_min": 4400, "precio_max": 6400, "precio_promedio": 5400, "tendencia": "ALTO" }
+    ]
+  },
+  {
+    "producto": "Maíz Amarillo",
+    "datos": [
+      { "puntos": 1, "mes": "Marzo", "precio_min": 1570, "precio_max": 1800, "precio_promedio": 1685, "tendencia": "BAJO" },
+      { "puntos": 2, "mes": "Abril", "precio_min": 1640, "precio_max": 1800, "precio_promedio": 1720, "tendencia": "BAJO" },
+      { "puntos": 3, "mes": "Febrero", "precio_min": 1640, "precio_max": 1900, "precio_promedio": 1770, "tendencia": "BAJO" },
+      { "puntos": 4, "mes": "Enero", "precio_min": 1740, "precio_max": 1840, "precio_promedio": 1790, "tendencia": "BAJO" },
+      { "puntos": 5, "mes": "Mayo", "precio_min": 1700, "precio_max": 1920, "precio_promedio": 1810, "tendencia": "BAJO" },
+      { "puntos": 6, "mes": "Junio", "precio_min": 1880, "precio_max": 2100, "precio_promedio": 1990, "tendencia": "NEUTRO" },
+      { "puntos": 7, "mes": "Julio", "precio_min": 1900, "precio_max": 2100, "precio_promedio": 2000, "tendencia": "NEUTRO" },
+      { "puntos": 8, "mes": "Agosto", "precio_min": 1970, "precio_max": 2300, "precio_promedio": 2130, "tendencia": "NEUTRO" },
+      { "puntos": 9, "mes": "Diciembre", "precio_min": 2200, "precio_max": 2320, "precio_promedio": 2260, "tendencia": "NEUTRO" },
+      { "puntos": 10, "mes": "Octubre", "precio_min": 2200, "precio_max": 2360, "precio_promedio": 2280, "tendencia": "NEUTRO" },
+      { "puntos": 11, "mes": "Noviembre", "precio_min": 2240, "precio_max": 2370, "precio_promedio": 2305, "tendencia": "NEUTRO" },
+      { "puntos": 12, "mes": "Septiembre", "precio_min": 2240, "precio_max": 2400, "precio_promedio": 2320, "tendencia": "NEUTRO" }
+    ]
+  },
+  {
+    "producto": "Frijol Cargamanto Rojo",
+    "datos": [
+      { "puntos": 1, "mes": "Marzo", "precio_min": 8000, "precio_max": 9200, "precio_promedio": 8600, "tendencia": "ALTO" },
+      { "puntos": 2, "mes": "Noviembre", "precio_min": 8700, "precio_max": 9200, "precio_promedio": 8950, "tendencia": "NEUTRO" },
+      { "puntos": 3, "mes": "Diciembre", "precio_min": 8900, "precio_max": 9300, "precio_promedio": 9100, "tendencia": "MEDIO" },
+      { "puntos": 4, "mes": "Enero", "precio_min": 8400, "precio_max": 9600, "precio_promedio": 9000, "tendencia": "MEDIO" },
+      { "puntos": 5, "mes": "Octubre", "precio_min": 8800, "precio_max": 9600, "precio_promedio": 9200, "tendencia": "BAJO" },
+      { "puntos": 6, "mes": "Abril", "precio_min": 8400, "precio_max": 11000, "precio_promedio": 9700, "tendencia": "NEUTRO" },
+      { "puntos": 7, "mes": "Febrero", "precio_min": 8800, "precio_max": 9600, "precio_promedio": 9200, "tendencia": "ALTO" },
+      { "puntos": 8, "mes": "Septiembre", "precio_min": 9000, "precio_max": 10400, "precio_promedio": 9700, "tendencia": "BAJO" },
+      { "puntos": 9, "mes": "Julio", "precio_min": 9000, "precio_max": 10000, "precio_promedio": 9500, "tendencia": "NEUTRO" },
+      { "puntos": 10, "mes": "Mayo", "precio_min": 9100, "precio_max": 10400, "precio_promedio": 9750, "tendencia": "ALTO" },
+      { "puntos": 11, "mes": "Junio", "precio_min": 9320, "precio_max": 10400, "precio_promedio": 9860, "tendencia": "ALTO" },
+      { "puntos": 12, "mes": "Agosto", "precio_min": 10000, "precio_max": 11040, "precio_promedio": 10520, "tendencia": "ALTO" }
+    ]
+  },
+  {
+    "producto": "Arveja Verde en Vaina",
+    "datos": [
+      { "puntos": 1, "mes": "Octubre", "precio_min": 3000, "precio_max": 4000, "precio_promedio": 3500, "tendencia": "BAJO" },
+      { "puntos": 2, "mes": "Septiembre", "precio_min": 3200, "precio_max": 5200, "precio_promedio": 4200, "tendencia": "BAJO" },
+      { "puntos": 3, "mes": "Noviembre", "precio_min": 3000, "precio_max": 5200, "precio_promedio": 4100, "tendencia": "ALTO" },
+      { "puntos": 4, "mes": "Agosto", "precio_min": 3200, "precio_max": 6000, "precio_promedio": 4600, "tendencia": "BAJO" },
+      { "puntos": 5, "mes": "Marzo", "precio_min": 3600, "precio_max": 6400, "precio_promedio": 4800, "tendencia": "ALTO" },
+      { "puntos": 6, "mes": "Febrero", "precio_min": 2800, "precio_max": 5800, "precio_promedio": 4300, "tendencia": "BAJO" },
+      { "puntos": 7, "mes": "Diciembre", "precio_min": 3200, "precio_max": 6800, "precio_promedio": 5000, "tendencia": "ALTO" },
+      { "puntos": 8, "mes": "Enero", "precio_min": 4000, "precio_max": 8200, "precio_promedio": 6100, "tendencia": "NEUTRO" },
+      { "puntos": 9, "mes": "Abril", "precio_min": 4400, "precio_max": 7600, "precio_promedio": 6000, "tendencia": "NEUTRO" },
+      { "puntos": 10, "mes": "Julio", "precio_min": 4800, "precio_max": 9400, "precio_promedio": 7100, "tendencia": "BAJO" },
+      { "puntos": 11, "mes": "Junio", "precio_min": 5000, "precio_max": 9400, "precio_promedio": 7200, "tendencia": "BAJO" },
+      { "puntos": 12, "mes": "Mayo", "precio_min": 6800, "precio_max": 12000, "precio_promedio": 9400, "tendencia": "NEUTRO" }
+    ]
+  },
+  {
+    "producto": "Coliflor",
+    "datos": [
+      { "puntos": 1, "mes": "Noviembre", "precio_min": 800, "precio_max": 1700, "precio_promedio": 1250, "tendencia": "BAJO" },
+      { "puntos": 2, "mes": "Septiembre", "precio_min": 1200, "precio_max": 3000, "precio_promedio": 2100, "tendencia": "NEUTRO" },
+      { "puntos": 3, "mes": "Octubre", "precio_min": 1200, "precio_max": 3000, "precio_promedio": 2100, "tendencia": "NEUTRO" },
+      { "puntos": 4, "mes": "Diciembre", "precio_min": 1000, "precio_max": 4000, "precio_promedio": 2500, "tendencia": "NEUTRO" },
+      { "puntos": 5, "mes": "Agosto", "precio_min": 1200, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "ALTO" },
+      { "puntos": 6, "mes": "Febrero", "precio_min": 1500, "precio_max": 4000, "precio_promedio": 2750, "tendencia": "NEUTRO" },
+      { "puntos": 7, "mes": "Julio", "precio_min": 1200, "precio_max": 3800, "precio_promedio": 2500, "tendencia": "BAJO" },
+      { "puntos": 8, "mes": "Marzo", "precio_min": 3000, "precio_max": 4000, "precio_promedio": 3500, "tendencia": "NEUTRO" },
+      { "puntos": 9, "mes": "Junio", "precio_min": 3000, "precio_max": 4000, "precio_promedio": 3500, "tendencia": "MEDIO" },
+      { "puntos": 10, "mes": "Enero", "precio_min": 3900, "precio_max": 6000, "precio_promedio": 4950, "tendencia": "ALTO" },
+      { "puntos": 11, "mes": "Mayo", "precio_min": 5000, "precio_max": 6000, "precio_promedio": 5500, "tendencia": "NEUTRO" },
+      { "puntos": 12, "mes": "Abril", "precio_min": 3500, "precio_max": 6000, "precio_promedio": 4750, "tendencia": "NEUTRO" }
+    ]
+  },
+  {
+    "producto": "Lechuga Crespa",
+    "datos": [
+      { "puntos": 1, "mes": "Agosto", "precio_min": 1667, "precio_max": 3333, "precio_promedio": 2500, "tendencia": "NEUTRO" },
+      { "puntos": 2, "mes": "Septiembre", "precio_min": 2333, "precio_max": 3000, "precio_promedio": 2667, "tendencia": "BAJO" },
+      { "puntos": 3, "mes": "Octubre", "precio_min": 2333, "precio_max": 3000, "precio_promedio": 2667, "tendencia": "NEUTRO" },
+      { "puntos": 4, "mes": "Diciembre", "precio_min": 2000, "precio_max": 3833, "precio_promedio": 2917, "tendencia": "BAJO" },
+      { "puntos": 5, "mes": "Enero", "precio_min": 1667, "precio_max": 4000, "precio_promedio": 2834, "tendencia": "BAJO" },
+      { "puntos": 6, "mes": "Julio", "precio_min": 2667, "precio_max": 3667, "precio_promedio": 3167, "tendencia": "BAJO" },
+      { "puntos": 7, "mes": "Noviembre", "precio_min": 2333, "precio_max": 4000, "precio_promedio": 3190, "tendencia": "ALTO" },
+      { "puntos": 8, "mes": "Febrero", "precio_min": 2000, "precio_max": 5000, "precio_promedio": 3500, "tendencia": "BAJO" },
+      { "puntos": 9, "mes": "Junio", "precio_min": 3333, "precio_max": 4333, "precio_promedio": 3833, "tendencia": "BAJO" },
+      { "puntos": 10, "mes": "Abril", "precio_min": 3000, "precio_max": 5000, "precio_promedio": 4000, "tendencia": "BAJO" },
+      { "puntos": 11, "mes": "Mayo", "precio_min": 3333, "precio_max": 4667, "precio_promedio": 4000, "tendencia": "NEUTRO" },
+      { "puntos": 12, "mes": "Marzo", "precio_min": 3000, "precio_max": 5000, "precio_promedio": 4000, "tendencia": "ALTO" }
+    ]
+  },
+  {
+    "producto": "Espinaca",
+    "datos": [
+      { "puntos": 1, "mes": "Noviembre", "precio_min": 1200, "precio_max": 2500, "precio_promedio": 1850, "tendencia": "NEUTRO" },
+      { "puntos": 2, "mes": "Julio", "precio_min": 800, "precio_max": 2500, "precio_promedio": 1650, "tendencia": "ALTO" },
+      { "puntos": 3, "mes": "Octubre", "precio_min": 800, "precio_max": 2500, "precio_promedio": 1650, "tendencia": "ALTO" },
+      { "puntos": 4, "mes": "Junio", "precio_min": 1000, "precio_max": 3000, "precio_promedio": 2000, "tendencia": "NEUTRO" },
+      { "puntos": 5, "mes": "Febrero", "precio_min": 1000, "precio_max": 3500, "precio_promedio": 2250, "tendencia": "NEUTRO" },
+      { "puntos": 6, "mes": "Enero", "precio_min": 1200, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "NEUTRO" },
+      { "puntos": 7, "mes": "Mayo", "precio_min": 2000, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "BAJO" },
+      { "puntos": 8, "mes": "Septiembre", "precio_min": 1200, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "ALTO" },
+      { "puntos": 9, "mes": "Agosto", "precio_min": 1200, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "ALTO" },
+      { "puntos": 10, "mes": "Diciembre", "precio_min": 1500, "precio_max": 5000, "precio_promedio": 3250, "tendencia": "ALTO" },
+      { "puntos": 11, "mes": "Abril", "precio_min": 2000, "precio_max": 6000, "precio_promedio": 4000, "tendencia": "BAJO" },
+      { "puntos": 12, "mes": "Marzo", "precio_min": 4000, "precio_max": 6000, "precio_promedio": 5000, "tendencia": "ALTO" }
+    ]
+  },
+  {
+  "producto": "Zanahoria",
+  "datos": [
+    { "puntos": 1, "mes": "Noviembre", "precio_min": 2000, "precio_max": 2667, "precio_promedio": 2334, "tendencia": "NEUTRO" },
+    { "puntos": 2, "mes": "Octubre", "precio_min": 2167, "precio_max": 2833, "precio_promedio": 2500, "tendencia": "BAJA" },
+    { "puntos": 3, "mes": "Mayo", "precio_min": 2000, "precio_max": 3333, "precio_promedio": 2667, "tendencia": "BAJO" },
+    { "puntos": 4, "mes": "Septiembre", "precio_min": 1883, "precio_max": 3333, "precio_promedio": 2608, "tendencia": "NEUTRO" },
+    { "puntos": 5, "mes": "Enero", "precio_min": 1500, "precio_max": 3333, "precio_promedio": 2417, "tendencia": "ALTA" },
+    { "puntos": 6, "mes": "Junio", "precio_min": 2000, "precio_max": 3667, "precio_promedio": 2834, "tendencia": "NEUTRO" },
+    { "puntos": 7, "mes": "Diciembre", "precio_min": 2333, "precio_max": 3500, "precio_promedio": 2917, "tendencia": "ALTA" },
+    { "puntos": 8, "mes": "Abril", "precio_min": 2000, "precio_max": 4000, "precio_promedio": 3000, "tendencia": "NEUTRO" },
+    { "puntos": 9, "mes": "Agosto", "precio_min": 2000, "precio_max": 4000, "precio_promedio": 3000, "tendencia": "BAJA" },
+    { "puntos": 10, "mes": "Febrero", "precio_min": 2333, "precio_max": 4333, "precio_promedio": 3333, "tendencia": "ALTA" },
+    { "puntos": 11, "mes": "Julio", "precio_min": 2167, "precio_max": 5000, "precio_promedio": 3584, "tendencia": "BAJA" },
+    { "puntos": 12, "mes": "Marzo", "precio_min": 2667, "precio_max": 5000, "precio_promedio": 3834, "tendencia": "NEUTRA" }
+  ]
+  },
+  {
+  "producto": "Lechuga Batavia",
+  "datos": [
+    { "puntos": 1, "mes": "Octubre", "precio_min": 800, "precio_max": 1700, "precio_promedio": 1250, "tendencia": "ALTA" },
+    { "puntos": 2, "mes": "Septiembre", "precio_min": 700, "precio_max": 2500, "precio_promedio": 1600, "tendencia": "NEUTRO" },
+    { "puntos": 3, "mes": "Noviembre", "precio_min": 800, "precio_max": 2000, "precio_promedio": 1400, "tendencia": "NEUTRO" },
+    { "puntos": 4, "mes": "Agosto", "precio_min": 800, "precio_max": 3000, "precio_promedio": 1900, "tendencia": "BAJA" },
+    { "puntos": 5, "mes": "Diciembre", "precio_min": 1200, "precio_max": 4000, "precio_promedio": 2600, "tendencia": "ALTA" },
+    { "puntos": 6, "mes": "Junio", "precio_min": 1500, "precio_max": 4000, "precio_promedio": 2750, "tendencia": "BAJA" },
+    { "puntos": 7, "mes": "Enero", "precio_min": 2000, "precio_max": 4000, "precio_promedio": 3000, "tendencia": "ALTA" },
+    { "puntos": 8, "mes": "Julio", "precio_min": 1500, "precio_max": 4500, "precio_promedio": 3000, "tendencia": "BAJA" },
+    { "puntos": 9, "mes": "Febrero", "precio_min": 1800, "precio_max": 4500, "precio_promedio": 3150, "tendencia": "ALTA" },
+    { "puntos": 10, "mes": "Abril", "precio_min": 2000, "precio_max": 5500, "precio_promedio": 3750, "tendencia": "BAJA" },
+    { "puntos": 11, "mes": "Mayo", "precio_min": 2000, "precio_max": 5000, "precio_promedio": 3500, "tendencia": "ALTO" },
+    { "puntos": 12, "mes": "Marzo", "precio_min": 3000, "precio_max": 5500, "precio_promedio": 4250, "tendencia": "ALTA" }
+  ]
+  },
+  {
+  "producto": "Fresa",
+  "datos": [
+    { "puntos": 1, "mes": "Enero", "precio_min": 7000, "precio_max": 8500, "precio_promedio": 7750, "tendencia": "MEDIO" },
+    { "puntos": 2, "mes": "Junio", "precio_min": 7000, "precio_max": 9000, "precio_promedio": 8000, "tendencia": "NEUTRO" },
+    { "puntos": 3, "mes": "Abril", "precio_min": 7500, "precio_max": 9000, "precio_promedio": 8250, "tendencia": "BAJO" },
+    { "puntos": 4, "mes": "Mayo", "precio_min": 7500, "precio_max": 9000, "precio_promedio": 8250, "tendencia": "ALTO" },
+    { "puntos": 5, "mes": "Febrero", "precio_min": 7000, "precio_max": 10000, "precio_promedio": 8500, "tendencia": "ALTO" },
+    { "puntos": 6, "mes": "Marzo", "precio_min": 8000, "precio_max": 9000, "precio_promedio": 8500, "tendencia": "MEDIO" },
+    { "puntos": 7, "mes": "Agosto", "precio_min": 7000, "precio_max": 10000, "precio_promedio": 8500, "tendencia": "NEUTRO" },
+    { "puntos": 8, "mes": "Noviembre", "precio_min": 8000, "precio_max": 10000, "precio_promedio": 9000, "tendencia": "BAJO" },
+    { "puntos": 9, "mes": "Septiembre", "precio_min": 8000, "precio_max": 10000, "precio_promedio": 9000, "tendencia": "BAJO" },
+    { "puntos": 10, "mes": "Octubre", "precio_min": 8000, "precio_max": 11000, "precio_promedio": 9500, "tendencia": "NEUTRO" },
+    { "puntos": 11, "mes": "Diciembre", "precio_min": 8000, "precio_max": 11000, "precio_promedio": 9500, "tendencia": "ALTO" },
+    { "puntos": 12, "mes": "Julio", "precio_min": 7500, "precio_max": 12000, "precio_promedio": 9750, "tendencia": "ALTO" }
+  ]
+  },
+  {
+  "producto": "Apio",
+  "datos": [
+    { "puntos": 1, "mes": "Noviembre", "precio_min": 160, "precio_max": 480, "precio_promedio": 320, "tendencia": "BAJO" },
+    { "puntos": 2, "mes": "Junio", "precio_min": 320, "precio_max": 600, "precio_promedio": 460, "tendencia": "NEUTRO" },
+    { "puntos": 3, "mes": "Abril", "precio_min": 320, "precio_max": 800, "precio_promedio": 560, "tendencia": "NEUTRO" },
+    { "puntos": 4, "mes": "Mayo", "precio_min": 320, "precio_max": 800, "precio_promedio": 560, "tendencia": "BAJO" },
+    { "puntos": 5, "mes": "Marzo", "precio_min": 320, "precio_max": 1000, "precio_promedio": 660, "tendencia": "BAJO" },
+    { "puntos": 6, "mes": "Diciembre", "precio_min": 200, "precio_max": 1400, "precio_promedio": 800, "tendencia": "ALTA" },
+    { "puntos": 7, "mes": "Octubre", "precio_min": 280, "precio_max": 2000, "precio_promedio": 1140, "tendencia": "BAJO" },
+    { "puntos": 8, "mes": "Enero", "precio_min": 600, "precio_max": 1600, "precio_promedio": 1100, "tendencia": "NEUTRO" },
+    { "puntos": 9, "mes": "Julio", "precio_min": 400, "precio_max": 2000, "precio_promedio": 1200, "tendencia": "BAJO" },
+    { "puntos": 10, "mes": "Febrero", "precio_min": 600, "precio_max": 2200, "precio_promedio": 1400, "tendencia": "ALTO" },
+    { "puntos": 11, "mes": "Septiembre", "precio_min": 1200, "precio_max": 2800, "precio_promedio": 2000, "tendencia": "BAJO" },
+    { "puntos": 12, "mes": "Agosto", "precio_min": 1400, "precio_max": 3200, "precio_promedio": 2300, "tendencia": "BAJO" }
+  ]
+  },
+  {
+  "producto": "Ajo",
+  "datos": [
+    { "puntos": 1, "mes": "Octubre", "precio_min": 9000, "precio_max": 12000, "precio_promedio": 10500, "tendencia": "BAJO" },
+    { "puntos": 2, "mes": "Septiembre", "precio_min": 10000, "precio_max": 16000, "precio_promedio": 13000, "tendencia": "NEUTRO" },
+    { "puntos": 3, "mes": "Noviembre", "precio_min": 10000, "precio_max": 16000, "precio_promedio": 13000, "tendencia": "ALTO" },
+    { "puntos": 4, "mes": "Agosto", "precio_min": 11000, "precio_max": 16000, "precio_promedio": 13500, "tendencia": "BAJO" },
+    { "puntos": 5, "mes": "Abril", "precio_min": 9000, "precio_max": 19000, "precio_promedio": 14000, "tendencia": "BAJO" },
+    { "puntos": 6, "mes": "Febrero", "precio_min": 12000, "precio_max": 17000, "precio_promedio": 14500, "tendencia": "ALTO" },
+    { "puntos": 7, "mes": "Marzo", "precio_min": 13000, "precio_max": 16000, "precio_promedio": 14500, "tendencia": "BAJO" },
+    { "puntos": 8, "mes": "Enero", "precio_min": 13000, "precio_max": 17000, "precio_promedio": 15000, "tendencia": "BAJO" },
+    { "puntos": 9, "mes": "Julio", "precio_min": 13000, "precio_max": 18000, "precio_promedio": 15500, "tendencia": "BAJO" },
+    { "puntos": 10, "mes": "Junio", "precio_min": 15000, "precio_max": 20000, "precio_promedio": 17500, "tendencia": "BAJO" },
+    { "puntos": 11, "mes": "Mayo", "precio_min": 16000, "precio_max": 20000, "precio_promedio": 18000, "tendencia": "NEUTRO" },
+    { "puntos": 12, "mes": "Diciembre", "precio_min": 12000, "precio_max": 24000, "precio_promedio": 18000, "tendencia": "ALTO" }
+  ]
+  },
+  {
+  "producto": "Uchuva",
+  "datos": [
+    { "puntos": 1, "mes": "Marzo", "precio_min": 4000, "precio_max": 5000, "precio_promedio": 4500, "tendencia": "NEUTRO" },
+    { "puntos": 2, "mes": "Febrero", "precio_min": 4000, "precio_max": 5500, "precio_promedio": 4750, "tendencia": "BAJO" },
+    { "puntos": 3, "mes": "Octubre", "precio_min": 4500, "precio_max": 5000, "precio_promedio": 4750, "tendencia": "NEUTRO" },
+    { "puntos": 4, "mes": "Diciembre", "precio_min": 4000, "precio_max": 6000, "precio_promedio": 5000, "tendencia": "NEUTRO" },
+    { "puntos": 5, "mes": "Septiembre", "precio_min": 4000, "precio_max": 6000, "precio_promedio": 5000, "tendencia": "BAJO" },
+    { "puntos": 6, "mes": "Agosto", "precio_min": 4200, "precio_max": 6000, "precio_promedio": 5100, "tendencia": "BAJO" },
+    { "puntos": 7, "mes": "Noviembre", "precio_min": 4500, "precio_max": 6000, "precio_promedio": 5250, "tendencia": "NEUTRO" },
+    { "puntos": 8, "mes": "Abril", "precio_min": 4500, "precio_max": 6000, "precio_promedio": 5250, "tendencia": "ALTO" },
+    { "puntos": 9, "mes": "Enero", "precio_min": 5000, "precio_max": 6000, "precio_promedio": 5500, "tendencia": "BAJO" },
+    { "puntos": 10, "mes": "Julio", "precio_min": 5000, "precio_max": 6500, "precio_promedio": 5750, "tendencia": "BAJO" },
+    { "puntos": 11, "mes": "Mayo", "precio_min": 6000, "precio_max": 6500, "precio_promedio": 6250, "tendencia": "ALTO" },
+    { "puntos": 12, "mes": "Junio", "precio_min": 6000, "precio_max": 6500, "precio_promedio": 6250, "tendencia": "NEUTRO" }
+  ]
+  },
+  {
+  "producto": "Mora de Castilla",
+  "datos": [
+    { "puntos": 1, "mes": "Septiembre", "precio_min": 2500, "precio_max": 3332, "precio_promedio": 2916, "tendencia": "BAJO" },
+    { "puntos": 2, "mes": "Agosto", "precio_min": 2500, "precio_max": 5000, "precio_promedio": 3750, "tendencia": "BAJO" },
+    { "puntos": 3, "mes": "Octubre", "precio_min": 3333, "precio_max": 4667, "precio_promedio": 4000, "tendencia": "NEUTRO" },
+    { "puntos": 4, "mes": "Noviembre", "precio_min": 3333, "precio_max": 5000, "precio_promedio": 4167, "tendencia": "ALTO" },
+    { "puntos": 5, "mes": "Febrero", "precio_min": 3667, "precio_max": 7000, "precio_promedio": 5344, "tendencia": "ALTO" },
+    { "puntos": 6, "mes": "Enero", "precio_min": 3833, "precio_max": 7500, "precio_promedio": 5667, "tendencia": "BAJO" },
+    { "puntos": 7, "mes": "Junio", "precio_min": 4167, "precio_max": 7500, "precio_promedio": 5834, "tendencia": "NEUTRO" },
+    { "puntos": 8, "mes": "Julio", "precio_min": 4167, "precio_max": 7500, "precio_promedio": 5834, "tendencia": "BAJO" },
+    { "puntos": 9, "mes": "Marzo", "precio_min": 4167, "precio_max": 7500, "precio_promedio": 5834, "tendencia": "BAJO" },
+    { "puntos": 10, "mes": "Diciembre", "precio_min": 5500, "precio_max": 6667, "precio_promedio": 6084, "tendencia": "ALTO" },
+    { "puntos": 11, "mes": "Mayo", "precio_min": 6000, "precio_max": 10000, "precio_promedio": 8000, "tendencia": "BAJO" },
+    { "puntos": 12, "mes": "Abril", "precio_min": 6667, "precio_max": 10000, "precio_promedio": 8334, "tendencia": "ALTO" }
+  ]
+  },
+  {
+  "producto": "Tomate de Árbol",
+  "datos": [
+    { "puntos": 1, "mes": "Enero", "precio_min": 1600, "precio_max": 2200, "precio_promedio": 1900, "tendencia": "NEUTRO" },
+    { "puntos": 2, "mes": "Marzo", "precio_min": 2400, "precio_max": 3200, "precio_promedio": 2800, "tendencia": "NEUTRO" },
+    { "puntos": 3, "mes": "Diciembre", "precio_min": 2400, "precio_max": 3200, "precio_promedio": 2800, "tendencia": "NEUTRO" },
+    { "puntos": 4, "mes": "Septiembre", "precio_min": 2400, "precio_max": 3200, "precio_promedio": 2800, "tendencia": "NEUTRO" },
+    { "puntos": 5, "mes": "Octubre", "precio_min": 2600, "precio_max": 3200, "precio_promedio": 2900, "tendencia": "BAJO" },
+    { "puntos": 6, "mes": "Noviembre", "precio_min": 2600, "precio_max": 3400, "precio_promedio": 3000, "tendencia": "MEDIO" },
+    { "puntos": 7, "mes": "Agosto", "precio_min": 2600, "precio_max": 3600, "precio_promedio": 3100, "tendencia": "NEUTRO" },
+    { "puntos": 8, "mes": "Abril", "precio_min": 2800, "precio_max": 3600, "precio_promedio": 3200, "tendencia": "BAJO" },
+    { "puntos": 9, "mes": "Febrero", "precio_min": 2000, "precio_max": 2800, "precio_promedio": 2400, "tendencia": "ALTO" },
+    { "puntos": 10, "mes": "Julio", "precio_min": 2800, "precio_max": 3800, "precio_promedio": 3300, "tendencia": "BAJO" },
+    { "puntos": 11, "mes": "Mayo", "precio_min": 2800, "precio_max": 3800, "precio_promedio": 3300, "tendencia": "ALTO" },
+    { "puntos": 12, "mes": "Junio", "precio_min": 3200, "precio_max": 4000, "precio_promedio": 3600, "tendencia": "ALTO" }
+  ]
+  },
+  {
+  "producto": "Aguacate Hass",
+  "datos": [
+    { "puntos": 1, "mes": "Junio", "precio_min": 3500, "precio_max": 7000, "precio_promedio": 5250, "tendencia": "NEUTRO" },
+    { "puntos": 2, "mes": "Enero", "precio_min": 5500, "precio_max": 7500, "precio_promedio": 6500, "tendencia": "BAJO" },
+    { "puntos": 3, "mes": "Mayo", "precio_min": 6000, "precio_max": 12000, "precio_promedio": 9000, "tendencia": "BAJO" },
+    { "puntos": 4, "mes": "Julio", "precio_min": 6500, "precio_max": 8000, "precio_promedio": 7250, "tendencia": "NEUTRO" },
+    { "puntos": 5, "mes": "Diciembre", "precio_min": 6000, "precio_max": 9000, "precio_promedio": 7500, "tendencia": "BAJA" },
+    { "puntos": 6, "mes": "Febrero", "precio_min": 6000, "precio_max": 7500, "precio_promedio": 6750, "tendencia": "ALTA" },
+    { "puntos": 7, "mes": "Agosto", "precio_min": 7000, "precio_max": 8000, "precio_promedio": 7500, "tendencia": "ALTA" },
+    { "puntos": 8, "mes": "Marzo", "precio_min": 7000, "precio_max": 8500, "precio_promedio": 7750, "tendencia": "ALTA" },
+    { "puntos": 9, "mes": "Noviembre", "precio_min": 8000, "precio_max": 9500, "precio_promedio": 8750, "tendencia": "BAJA" },
+    { "puntos": 10, "mes": "Septiembre", "precio_min": 8000, "precio_max": 9500, "precio_promedio": 8750, "tendencia": "ALTA" },
+    { "puntos": 11, "mes": "Octubre", "precio_min": 9000, "precio_max": 10000, "precio_promedio": 9500, "tendencia": "NEUTRO" },
+    { "puntos": 12, "mes": "Abril", "precio_min": 8000, "precio_max": 12000, "precio_promedio": 10000, "tendencia": "ALTA" }
+  ]
+  }
+]
