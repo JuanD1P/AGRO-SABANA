@@ -38,7 +38,7 @@
   --sh-sm:0 6px 14px rgba(0,0,0,.06);
   --sh-lg:0 14px 28px rgba(0,0,0,.08);
   --container:1160px;
-}
+} 
 
 .app{
   background: radial-gradient(900px 360px at 50% -60px, var(--g-50), #fff 60%);

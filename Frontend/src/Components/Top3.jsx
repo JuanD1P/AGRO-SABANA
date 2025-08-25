@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DOCSS/Top3.css";
+import bg from '../ImagenesP/ImagenesTop3/fondoTop3.jpg'; 
 
 const API_BASE = "http://localhost:3000/openmeteo";
 
@@ -313,7 +314,7 @@ const formatPrettyDateShort = (str) => {
   const isLoading = (batchLoading || prodLoading || rankLoading) && !(batchErr || prodErr || rankErr);
 
   return (
-    <div className="top3x-root">
+    <div className="top3x-root" style={{ backgroundImage: `url(${bg})` }}>
       <header className="top3x-bar">
         <div className="top3x-titlewrap">
           <h2 className="top3x-title">
