@@ -255,7 +255,7 @@
   ]
   },
   {
-  "producto": "Mora de Castilla",
+  "producto": "Mora",
   "datos": [
     { "puntos": 1, "mes": "Septiembre", "precio_min": 2500, "precio_max": 3332, "precio_promedio": 2916, "tendencia": "BAJO" },
     { "puntos": 2, "mes": "Agosto", "precio_min": 2500, "precio_max": 5000, "precio_promedio": 3750, "tendencia": "BAJO" },
@@ -289,7 +289,7 @@
   ]
   },
   {
-  "producto": "Aguacate Hass",
+  "producto": "Aguacate",
   "datos": [
     { "puntos": 1, "mes": "Junio", "precio_min": 3500, "precio_max": 7000, "precio_promedio": 5250, "tendencia": "NEUTRO" },
     { "puntos": 2, "mes": "Enero", "precio_min": 5500, "precio_max": 7500, "precio_promedio": 6500, "tendencia": "BAJO" },

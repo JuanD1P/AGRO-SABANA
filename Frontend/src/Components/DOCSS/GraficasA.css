@@ -6,7 +6,6 @@
   --border: #e2e8f0;
   --shadow: 0 18px 50px rgba(2,6,23,.10);
 
-  /* verdes pastel */
   --sprout-50:#ecfdf5;
   --sprout-100:#d1fae5;
   --sprout-200:#a7f3d0;
@@ -57,10 +56,10 @@
 }
 .gx2-note{ grid-column: 1 / -1; margin:2px 0 0; color:var(--muted); font-weight:600; }
 
-/* ===== acordeones municipios ===== */
+
 .gx2-accordGrid{
   display:grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas para orden visual */
+  grid-template-columns: repeat(2, 1fr); 
   gap:12px;
 }
 @media (max-width: 860px){ .gx2-accordGrid{ grid-template-columns: 1fr; } }
@@ -102,7 +101,6 @@
   font-weight:800; font-size:.86rem;
 }
 
-/* ===== lista productos ===== */
 .gx2-list{ display:grid; grid-template-columns: 1fr; gap:8px; margin-top:2px; }
 .gx2-row{
   display:grid; grid-template-columns: 22px 1fr auto;
@@ -122,7 +120,7 @@
   border:1px solid #bbf7d0; border-radius:9999px; padding:4px 10px;
 }
 
-/* botón ver gráfica */
+
 .gx2-chartToggle{ margin-top:12px; display:flex; justify-content:center; }
 .gx2-btn{
   border:1px solid #bbf7d0; color:#065f46; font-weight:900;
@@ -131,7 +129,7 @@
 }
 .gx2-btn:hover{ filter: brightness(.98); }
 
-/* wrapper colapsable de la gráfica */
+
 .gx2-chartWrap{
   overflow:hidden;
   border:1px solid var(--border);
@@ -144,7 +142,6 @@
 }
 .gx2-chartWrap.open{ opacity: 1; padding: 8px; }
 
-/* estados */
 .gx2-state{
   max-width: 900px; margin: 40px auto;
   background:#fff; border:1px solid var(--border);

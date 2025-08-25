@@ -38,7 +38,6 @@ export default function GraficasA() {
           api.get("/productos/productos"),
         ]);
         if (!mRes.data?.ok || !pRes.data?.ok) throw new Error("Respuesta inválida");
-        // orden alfabético para mayor legibilidad
         const muni = (mRes.data.data || [])
           .map((x) => ({
             ...x,
@@ -59,7 +58,6 @@ export default function GraficasA() {
     load();
   }, []);
 
-  // Datos para la gráfica: producto vs interés (ordenado de mayor a menor)
   const dataGraf = useMemo(() => {
     const rows = (productos || []).map((p) => ({
       producto: p.nombre,
@@ -69,15 +67,12 @@ export default function GraficasA() {
     return rows;
   }, [productos]);
 
-  // escala de verdes pastel según intensidad
   const maxVal = useMemo(
     () => Math.max(1, ...dataGraf.map((d) => d.valor)),
     [dataGraf]
   );
   const greenScale = (v) => {
-    const t = maxVal ? v / maxVal : 0; // 0..1
-    // De un verde muy suave a uno medio (pastel)
-    // rgba(16,185,129, alpha) -> emerald 500 con alpha variable
+    const t = maxVal ? v / maxVal : 0; 
     return `rgba(16,185,129, ${0.35 + t * 0.45})`;
   };
 
@@ -88,7 +83,6 @@ export default function GraficasA() {
       return next;
     });
 
-  // alto dinámico de la gráfica cuando esté abierta
   const chartHeight = Math.min(900, Math.max(320, 38 * dataGraf.length + 80));
 
   if (loading) return <div className="gx2-state">Cargando…</div>;
@@ -96,7 +90,6 @@ export default function GraficasA() {
 
   return (
     <div className="gx2-page">
-      {/* ===== 1) MUNICIPIOS → PRODUCTOS (ACORDEÓN) ===== */}
       <section className="gx2-section glass">
         <header className="gx2-head">
           <h2 className="gx2-title">Municipios y productos</h2>
@@ -135,7 +128,6 @@ export default function GraficasA() {
         </div>
       </section>
 
-      {/* ===== 2) LISTA DE PRODUCTOS + BOTÓN PARA MOSTRAR GRÁFICA ===== */}
       <section className="gx2-section glass">
         <header className="gx2-head">
           <h2 className="gx2-title">Interés por producto</h2>
@@ -145,7 +137,6 @@ export default function GraficasA() {
           </p>
         </header>
 
-        {/* listado compacto: Producto — Interés */}
         <div className="gx2-list">
           {productos.map((p) => (
             <div key={p.id} className="gx2-row">

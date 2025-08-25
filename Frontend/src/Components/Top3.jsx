@@ -384,10 +384,14 @@ const formatPrettyDateShort = (str) => {
                 </p>
                 <button
                   className="top3x-btn"
-                  onClick={() => navigate("/Mercado")}
+                  onClick={() => {
+                    localStorage.setItem("productoSeleccionado", t.producto); 
+                    navigate("/Mercado");
+                  }}
                 >
                   Ver más
                 </button>
+
               </article>
             ))
           ) : (

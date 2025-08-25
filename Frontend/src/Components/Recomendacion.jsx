@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import './DOCSS/Recomendacion.css';
 
 const API_BASE = "http://localhost:3000/openmeteo";
 
@@ -64,12 +65,9 @@ export default function Recomendacion() {
       const found = (json.data || []).find(m => m.municipio?.toLowerCase() === selectedMunicipio.toLowerCase());
       if (!found) throw new Error(`No encontré datos para "${selectedMunicipio}".`);
 
-      // Asegurar orden alfabético
       found.productos.sort((a,b)=>a.producto.localeCompare(b.producto,"es"));
-      // found.productos ya debe traer cont
       setMuniData(found);
 
-      // Guarda fechas de cosecha (siembra + ciclo)
       const norm = normalizeDate(selectedDate);
       if (norm) {
         const d = new Date(`${norm}T12:00:00`);
@@ -121,7 +119,6 @@ export default function Recomendacion() {
     return { ok: false, error: lastErr || "Max retries reached" };
   };
 
-  // Concurrencia simple
   const runWithConcurrency = async (items, worker, concurrency = 3) => {
     const results = new Array(items.length);
     let idx = 0;
@@ -137,7 +134,6 @@ export default function Recomendacion() {
     return results;
   };
 
-  // ── API 2024 optimizada ──
   const fetchBatch2024 = async () => {
     if (inFlightRef.current) return;
     const place = selectedMunicipio;
@@ -231,7 +227,6 @@ export default function Recomendacion() {
     loadRanking();
   }, []);
 
-  // Une datos de BD (incluye cont) con clima
   const merged = useMemo(() => {
     if (!muniData) return [];
     const apiByProd = new Map(batchResults.map(r => [normName(r.producto), r]));
@@ -250,7 +245,7 @@ export default function Recomendacion() {
 
       return {
         producto: p.producto,
-        cont: p.cont ?? 0,                // 👈 propagamos el contador
+        cont: p.cont ?? 0,
         date2024: r?.date2024 || "",
         temp_avg_c: tempAvg,
         temp_min_c: m?.temp_min_c,
@@ -293,7 +288,6 @@ export default function Recomendacion() {
     return null;
   };
 
-  // Ranking mensual + puntaje final (restando 0.4 * cont)
   const rankingRows = useMemo(() => {
     const rows = [];
     if (!rankData.length) return rows;
@@ -341,131 +335,153 @@ export default function Recomendacion() {
     try { localStorage.setItem("puntuacionesFinales", JSON.stringify(finales)); } catch {}
   }, [rankingRows]);
 
-  // ── UI ──
+  // ====== UI ======
   return (
-    <div style={{ maxWidth: 1100, margin: "24px auto", padding: 16 }}>
-      <h2 style={{ margin: 0 }}>Comparación clima (API 2024) vs rangos óptimos (BD)</h2>
-      <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
-        Municipio: <strong>{selectedMunicipio || "—"}</strong> · Siembra seleccionada: <strong>{normalizeDate(selectedDate) || "—"}</strong>
-      </div>
+    <div className="recx-root recx-theme-light">
+      <header className="recx-hero">
+        <div className="recx-hero-glass">
+          <button
+            type="button"
+            className="recx-backlink"
+            onClick={() => { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch {} window.location.assign('/Top3'); }}
+            aria-label="Volver a Top3"
+          >
+            <span aria-hidden>←</span> Volver a Top3
+          </button>
 
-      {(batchLoading || prodLoading) && <p style={{ marginTop: 10 }}>Cargando…</p>}
-      {(batchErr || prodErr) && <p style={{ marginTop: 10, color: "crimson" }}>{batchErr || prodErr}</p>}
+          <h2 className="recx-title">Comparación clima (API 2024) vs rangos óptimos (BD)</h2>
+          <div className="recx-meta">
+            Municipio: <strong>{selectedMunicipio || "—"}</strong>
+            <span className="recx-dot">•</span>
+            Siembra seleccionada: <strong>{normalizeDate(selectedDate) || "—"}</strong>
+          </div>
+
+          {(batchLoading || prodLoading) && <p className="recx-status recx-status--loading">Cargando…</p>}
+          {(batchErr || prodErr) && <p className="recx-status recx-status--error">{batchErr || prodErr}</p>}
+        </div>
+      </header>
 
       {merged.length > 0 && (
-        <div style={{ marginTop: 12, overflowX: "auto", border: "1px solid #e4e7ec", borderRadius: 8 }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead style={{ background: "#f8fafc" }}>
-              <tr>
-                <th style={th}>Producto</th>
-                <th style={th}>Contador</th>
-                <th style={th}>Fecha consulta (2024)</th>
-                <th style={th}>Temp prom (°C)</th>
-                <th style={th}>Mín / Máx (°C)</th>
-                <th style={th}>Humedad (%)</th>
-                <th style={th}>Precip (mm)</th>
-                <th style={th}>Viento (km/h)</th>
-                <th style={th}>Nubosidad (%)</th>
-                <th style={th}>Fuente</th>
-                <th style={th}>Estado</th>
-                <th style={th}>Temp óptima (°C)</th>
-                <th style={th}>Humedad óptima (%)</th>
-                <th style={th}>¿Temp en rango?</th>
-                <th style={th}>¿Humedad en rango?</th>
-                <th style={th}>Puntos clima</th>
-              </tr>
-            </thead>
-            <tbody>
-              {merged.map((row) => (
-                <tr key={row.producto} style={{ borderTop: "1px solid #f1f5f9", background: row.producto === "TOTAL" ? "#f1f5f9" : "transparent" }}>
-                  <td style={tdBold}>{row.producto}</td>
-                  {row.producto !== "TOTAL" ? (
-                    <>
-                      <td style={td}>{row.cont ?? 0}</td>
-                      <td style={td}>{row.date2024 || "—"}</td>
-                      <td style={td}>{fmt(row.temp_avg_c)}</td>
-                      <td style={td}>{fmt(row.temp_min_c)} / {fmt(row.temp_max_c)}</td>
-                      <td style={td}>{fmt(row.humidity)}</td>
-                      <td style={td}>{fmt(row.precip_mm)}</td>
-                      <td style={td}>{row.wind_kph != null ? `${row.wind_kph}` : "—"}</td>
-                      <td style={td}>{row.cloudcover != null ? `${row.cloudcover}` : "—"}</td>
-                      <td style={td}>{row.source || "—"}</td>
-                      <td style={{ ...td, color: row.estado?.startsWith("Error") ? "crimson" : "#0a7f2f" }}>{row.estado}</td>
-                      <td style={td}>{fmt(row.tmin_opt)} – {fmt(row.tmax_opt)}</td>
-                      <td style={td}>{fmt(row.hmin_opt)} – {fmt(row.hmax_opt)}</td>
-                      <td style={{ ...td, fontWeight: 700, color: row.temp_ok == null ? "#6b7280" : row.temp_ok ? "#0a7f2f" : "#b91c1c" }}>
-                        {row.temp_ok == null ? "—" : row.temp_ok ? "Sí" : "No"}
-                      </td>
-                      <td style={{ ...td, fontWeight: 700, color: row.hum_ok == null ? "#6b7280" : row.hum_ok ? "#0a7f2f" : "#b91c1c" }}>
-                        {row.hum_ok == null ? "—" : row.hum_ok ? "Sí" : "No"}
-                      </td>
-                      <td style={{ ...td, fontWeight: 700 }}>{row.puntos}</td>
-                    </>
-                  ) : (
-                    <td colSpan={14} style={{ ...td, fontWeight: 700, textAlign: "right" }}>
-                      TOTAL PUNTOS (clima): {row.puntos}
-                    </td>
-                  )}
+        <section className="recx-card recx-animate-up">
+          <div className="recx-tableWrap">
+            <table className="recx-table">
+              <thead>
+                <tr>
+                  <th className="recx-th recx-th--sticky">Producto</th>
+                  <th className="recx-th">Contador</th>
+                  <th className="recx-th">Fecha consulta (2024)</th>
+                  <th className="recx-th">Temp prom (°C)</th>
+                  <th className="recx-th">Mín / Máx (°C)</th>
+                  <th className="recx-th">Humedad (%)</th>
+                  <th className="recx-th">Precip (mm)</th>
+                  <th className="recx-th">Viento (km/h)</th>
+                  <th className="recx-th">Nubosidad (%)</th>
+                  <th className="recx-th">Fuente</th>
+                  <th className="recx-th">Estado</th>
+                  <th className="recx-th">Temp óptima (°C)</th>
+                  <th className="recx-th">Humedad óptima (%)</th>
+                  <th className="recx-th">¿Temp en rango?</th>
+                  <th className="recx-th">¿Humedad en rango?</th>
+                  <th className="recx-th">Puntos clima</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {merged.map((row) => (
+                  <tr key={row.producto} className={`recx-tr ${row.producto === "TOTAL" ? "recx-tr--total" : ""}`}>
+                    <td className="recx-td recx-td--bold recx-td--sticky">
+                      <span className="recx-chip">{row.producto}</span>
+                    </td>
+                    {row.producto !== "TOTAL" ? (
+                      <>
+                        <td className="recx-td">{row.cont ?? 0}</td>
+                        <td className="recx-td">{row.date2024 || "—"}</td>
+                        <td className="recx-td">{fmt(row.temp_avg_c)}</td>
+                        <td className="recx-td">{fmt(row.temp_min_c)} / {fmt(row.temp_max_c)}</td>
+                        <td className="recx-td">
+                          <div className="recx-bar" data-value={row.humidity ?? 0} title={`${row.humidity ?? "—"}%`}/>
+                        </td>
+                        <td className="recx-td">{fmt(row.precip_mm)}</td>
+                        <td className="recx-td">{row.wind_kph != null ? `${row.wind_kph}` : "—"}</td>
+                        <td className="recx-td">{row.cloudcover != null ? `${row.cloudcover}` : "—"}</td>
+                        <td className="recx-td">{row.source || "—"}</td>
+                        <td className={`recx-td ${row.estado?.startsWith("Error") ? "recx-badge recx-badge--error" : "recx-badge recx-badge--ok"}`}>{row.estado}</td>
+                        <td className="recx-td">{fmt(row.tmin_opt)} – {fmt(row.tmax_opt)}</td>
+                        <td className="recx-td">{fmt(row.hmin_opt)} – {fmt(row.hmax_opt)}</td>
+                        <td className={`recx-td recx-td--flag ${row.temp_ok == null ? "recx-flag--na" : row.temp_ok ? "recx-flag--yes" : "recx-flag--no"}`}>
+                          {row.temp_ok == null ? "—" : row.temp_ok ? "Sí" : "No"}
+                        </td>
+                        <td className={`recx-td recx-td--flag ${row.hum_ok == null ? "recx-flag--na" : row.hum_ok ? "recx-flag--yes" : "recx-flag--no"}`}>
+                          {row.hum_ok == null ? "—" : row.hum_ok ? "Sí" : "No"}
+                        </td>
+                        <td className="recx-td">
+                          <span className={`recx-pill ${row.puntos >= 0 ? "recx-pill--pos" : "recx-pill--neg"}`}>{row.puntos}</span>
+                        </td>
+                      </>
+                    ) : (
+                      <td className="recx-td recx-td--right recx-td--bold" colSpan={14}>
+                        TOTAL PUNTOS (clima): {row.puntos}
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
 
-      {/* ───────────────────────────────────────────── */}
-      {/* TABLA: Ranking mensual + puntos finales (ajuste por cont) */}
-      {/* ───────────────────────────────────────────── */}
-      <hr style={{ margin: "28px 0", opacity: 0.25 }} />
-      <h2 style={{ marginBottom: 8 }}>Ranking mensual por producto (Puntuacion.json) + Puntaje final</h2>
-      {rankLoading && <p>Cargando ranking…</p>}
-      {rankErr && <p style={{ color: "crimson" }}>Error: {rankErr}</p>}
+      <hr className="recx-sep" />
+      <h2 className="recx-title">Ranking mensual por producto (Puntuacion.json) + Puntaje final</h2>
+      {rankLoading && <p className="recx-status recx-status--loading">Cargando ranking…</p>}
+      {rankErr && <p className="recx-status recx-status--error">Error: {rankErr}</p>}
 
       {rankingRows.length > 0 ? (
-        <div style={{ overflowX: "auto", border: "1px solid #e4e7ec", borderRadius: 8 }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead style={{ background: "#f8fafc" }}>
-              <tr>
-                <th style={th}>Producto</th>
-                <th style={th}>Mes</th>
-                <th style={th}>Puesto</th>
-                <th style={th}>Contador</th>
-                <th style={th}>Puntos clima</th>
-                <th style={th}>Penalización (0.4 × cont)</th>
-                <th style={th}>Puntos finales</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankingRows.map((r) => {
-                const penal = (r.cont ?? 0) * 0.4;
-                return (
-                  <tr key={`${r.producto}-${r.mes}`} style={{ borderTop: "1px solid #f1f5f9" }}>
-                    <td style={tdBold}>{r.producto}</td>
-                    <td style={td}>{r.mes}</td>
-                    <td style={td}>{r.puesto}</td>
-                    <td style={td}>{r.cont ?? 0}</td>
-                    <td style={td}>{r.puntosClima}</td>
-                    <td style={td}>-{penal}</td>
-                    <td style={{ ...td, fontWeight: 700 }}>{r.puntosFinales}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <section className="recx-card recx-animate-up">
+          <div className="recx-tableWrap">
+            <table className="recx-table">
+              <thead>
+                <tr>
+                  <th className="recx-th recx-th--sticky">Producto</th>
+                  <th className="recx-th">Mes</th>
+                  <th className="recx-th">Puesto</th>
+                  <th className="recx-th">Contador</th>
+                  <th className="recx-th">Puntos clima</th>
+                  <th className="recx-th">Penalización (0.4 × cont)</th>
+                  <th className="recx-th">Puntos finales</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rankingRows.map((r) => {
+                  const penal = (r.cont ?? 0) * 0.4;
+                  return (
+                    <tr key={`${r.producto}-${r.mes}`} className="recx-tr">
+                      <td className="recx-td recx-td--bold recx-td--sticky">{r.producto}</td>
+                      <td className="recx-td">{r.mes}</td>
+                      <td className="recx-td">{r.puesto}</td>
+                      <td className="recx-td">{r.cont ?? 0}</td>
+                      <td className="recx-td">{r.puntosClima}</td>
+                      <td className="recx-td">-{penal}</td>
+                      <td className="recx-td">
+                        <span className="recx-pill recx-pill--pos">{r.puntosFinales}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
       ) : (
-        !rankLoading && <p style={{ color: "#6b7280" }}>No hay filas de ranking para mostrar aún.</p>
+        !rankLoading && <p className="recx-empty">No hay filas de ranking para mostrar aún.</p>
       )}
 
-      {/* ───────────────────────────────────────────── */}
-      {/* RESUMEN FINAL POR PRODUCTO */}
-      {/* ───────────────────────────────────────────── */}
-      <hr style={{ margin: "28px 0", opacity: 0.25 }} />
-      <h2 style={{ marginBottom: 8 }}>Puntaje final ajustado por contador</h2>
-      <div style={{ padding: "12px", border: "1px solid #e4e7ec", borderRadius: 8 }}>
+      <hr className="recx-sep" />
+      <h2 className="recx-title">Puntaje final ajustado por contador</h2>
+      <div className="recx-card recx-card--compact recx-animate-up">
         {rankingRows.map(r => (
-          <div key={`final-${r.producto}`} style={{ margin: "4px 0" }}>
-            <strong>{r.producto}</strong>: {r.puntosFinales}
+          <div key={`final-${r.producto}`} className="recx-line">
+            <strong className="recx-chip">{r.producto}</strong>
+            <span className="recx-lineScore">{r.puntosFinales}</span>
           </div>
         ))}
       </div>
