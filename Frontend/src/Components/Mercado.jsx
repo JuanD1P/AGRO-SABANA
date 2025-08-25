@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./DOCSS/Mercado.css";
+import axios from "axios";
 
 const API_BASE = "http://localhost:3000/openmeteo";
 const HIDE_WIND = true; 
@@ -47,7 +48,6 @@ const trendExplain = (t) => {
   return "los precios se mantienen cerca de la media histórica.";
 };
 
-
 const buildAdvices = (m = {}) => {
   const out = [];
   if (m.precip_mm >= 10) out.push("Prepara drenajes y zanjas; evita labores que compacten el suelo durante el evento.");
@@ -87,6 +87,11 @@ export default function Mercado() {
   const [monthlyLoading, setMonthlyLoading] = useState(false);
   const [monthlyErr, setMonthlyErr] = useState("");
   const [monthlyItem, setMonthlyItem] = useState(null); 
+
+  const [savingInterest, setSavingInterest] = useState(false);
+
+
+  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     const prod = localStorage.getItem("productoSeleccionado") || "";
@@ -206,13 +211,78 @@ export default function Mercado() {
     });
   }, [monthlyItem]);
 
+const handleInteres = async () => {
+  if (!producto) return;
+  try {
+    setSavingInterest(true);
+    const body = { nombre: producto };
+
+    const result = await axios.post('http://localhost:3000/productos/productos/interes', body);
+
+    if (!result.data?.ok) {
+      throw new Error(result.data?.error || "Error registrando interés");
+    }
+
+
+    const key = `interest:${producto.toLowerCase().trim()}`;
+    localStorage.setItem(key, "1");
+    setInterestSaved(true);
+
+
+    const nuevo = result.data?.newCont;
+    setToast(`Gracias por cosechar ${producto}!, Tendremos en cuenta tu eleccion`);
+    setTimeout(() => setToast(""), 3000);
+  } catch (err) {
+    console.error("Error registrando interés:", err);
+    setToast("Hubo un problema registrando tu interés. Intenta más tarde.");
+    setTimeout(() => setToast(""), 3000);
+  } finally {
+    setSavingInterest(false);
+  }
+};
+
+const [interestSaved, setInterestSaved] = useState(false);
+const [toast, setToast] = useState(""); 
+useEffect(() => {
+  if (!producto) return;
+  const key = `interest:${producto.toLowerCase().trim()}`;
+  const saved = localStorage.getItem(key) === "1";
+  setInterestSaved(saved);
+}, [producto]);
+
+
   return (
     <div className="mkd-root">
       <header className="mkd-head">
-        <button className="mkd-back mkd-back--pretty" onClick={() => navigate("/Top3")}>
-          <span className="mkd-back-icon" aria-hidden>⬅️</span>
-          Volver al Top 3
-        </button>
+
+<div className="mkd-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+  <button className="mkd-back mkd-back--pretty" onClick={() => navigate("/Top3")}>
+    <span className="mkd-back-icon" aria-hidden>⬅️</span>
+    Volver al Top 3
+  </button>
+
+  {!interestSaved ? (
+    <button
+      className="mkd-interest mkd-interest--pretty"
+      onClick={handleInteres}
+      disabled={!producto || savingInterest}
+      title="Sumar +1 al interés de este producto"
+    >
+      {savingInterest ? "Guardando…" : "🌱 Estoy interesado en cultivar este producto"}
+    </button>
+  ) : (
+    <div className="mkd-success">
+      <span className="mkd-success-check" aria-hidden>✔</span>
+      <div className="mkd-success-text">
+        <strong>¡Gracias!</strong>
+        <span>Registramos tu interés por <b>{producto}</b>.</span>
+      </div>
+    </div>
+  )}
+</div>
+
+{toast && <div className="mkd-toast" role="status" aria-live="polite">{toast}</div>}
+
 
         <h1 className="mkd-title">
           Vas a cosechar <span className="mkd-prod">{producto || "—"}</span>
@@ -336,7 +406,6 @@ function PriceRangeChart({ data, highlightIndex }) {
   const height = 260;
   const topPad = 16, bottomPad = 34, leftPad = 48, rightPad = 16;
 
-
   const colW = 56;         
   const rangeW = 8;        
   const dotR = 4.5;          
@@ -347,7 +416,6 @@ function PriceRangeChart({ data, highlightIndex }) {
     return topPad + (1 - v / maxVal) * h;
   };
 
-
   const [tip, setTip] = useState(null);
 
   const ticks = [0, 0.25, 0.5, 0.75, 1].map(t => Math.round(maxVal * t));
@@ -355,7 +423,6 @@ function PriceRangeChart({ data, highlightIndex }) {
   return (
     <div className="mkd-chart-wrap">
       <svg className="mkd-svg" viewBox={`0 0 ${totalW} ${height}`} role="img" aria-label="Rango de precios por mes">
-  
         {ticks.map((val, i) => {
           const y = yScale(val);
           return (
@@ -368,7 +435,6 @@ function PriceRangeChart({ data, highlightIndex }) {
           );
         })}
 
-  
         {rows.map((r, idx) => {
           const cx = leftPad + idx * colW + colW / 2;
 
@@ -395,7 +461,6 @@ function PriceRangeChart({ data, highlightIndex }) {
                }}
                onMouseLeave={() => setTip(null)}
             >
-   
               {isHighlight && (
                 <rect
                   x={cx - 20} y={topPad - 6} width={40} height={height - topPad - bottomPad + 12}
@@ -403,12 +468,9 @@ function PriceRangeChart({ data, highlightIndex }) {
                 />
               )}
 
-    
               <line x1={cx} x2={cx} y1={yMax} y2={yMin} className="mkd-range" />
               <rect x={cx - rangeW/2} y={yMax} width={rangeW} height={yMin - yMax} rx="4" className="mkd-range-bar" />
-
-                    <circle cx={cx} cy={yAvg} r={dotR} className="mkd-dot" />
-
+              <circle cx={cx} cy={yAvg} r={dotR} className="mkd-dot" />
               <text x={cx} y={height - 10} className="mkd-x" textAnchor="middle">{r.mes}</text>
             </g>
           );

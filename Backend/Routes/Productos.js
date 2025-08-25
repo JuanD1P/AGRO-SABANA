@@ -143,4 +143,44 @@ router.patch('/productos/:id/cont', verifyToken, (req, res) => {
   );
 });
 
+
+router.post('/productos/interes', verifyToken, (req, res) => {
+  const { nombre, producto_id } = req.body || {};
+
+  let whereSql = '';
+  let whereVal = null;
+  if (Number.isInteger(producto_id)) {
+    whereSql = 'id = ?';
+    whereVal = producto_id;
+  } else if (typeof nombre === 'string' && nombre.trim()) {
+    whereSql = 'nombre = ?';
+    whereVal = nombre.trim();
+  } else {
+    return res.status(400).json({ ok: false, error: 'Falta nombre o producto_id' });
+  }
+
+  const sqlUpdate = `UPDATE producto SET cont = COALESCE(cont, 0) + 1 WHERE ${whereSql} LIMIT 1`;
+
+  con.query(sqlUpdate, [whereVal], (err, result) => {
+    if (err) {
+      console.error('Error incrementando cont:', err);
+      return res.status(500).json({ ok: false, error: 'DB error' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ ok: false, error: 'Producto no encontrado' });
+    }
+
+
+    con.query(`SELECT id, nombre, cont FROM producto WHERE ${whereSql} LIMIT 1`, [whereVal], (err2, rows) => {
+      if (err2) {
+        console.error('Error leyendo cont:', err2);
+        return res.status(200).json({ ok: true, newCont: null });
+      }
+      const prod = rows?.[0];
+      return res.json({ ok: true, newCont: prod?.cont ?? null, producto: prod });
+    });
+  });
+});
+
+
 export const productosRouter = router;
