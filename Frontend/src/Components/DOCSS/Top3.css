@@ -258,3 +258,14 @@
 @media (max-width: 560px){
   .top3x-cards{ grid-template-columns: 1fr; }
 }
+
+.footer{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background:#133322; color:#e8f2eb;
+  text-align:center; padding:14px;
+  z-index: 10;  /* por si hay overlays */
+}
+.top3x-root{
+  padding-bottom: 50px; /* aprox. altura del footer */
+}

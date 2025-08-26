@@ -4,7 +4,7 @@
   border-radius: 12px;
   padding: 10px 14px;
   background: linear-gradient(135deg, #243949 0%, #517FA4 100%); /* azul frío */
-  color: #fff;
+  color: #fff;  
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(20, 60, 90, 0.25);
@@ -19,8 +19,8 @@
   border: 0;
   border-radius: 12px;
   padding: 12px 16px;
-  background: linear-gradient(135deg, #0ea5e9 0%, #22c1c3 100%); /* cian -> aqua */
-  color: #071a2a;
+  background: linear-gradient(135deg, #448a68, #219652); /* cian -> aqua */
+  color: #ffffff;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 8px 22px rgba(0, 160, 200, 0.28);
@@ -431,3 +431,13 @@
 .lg-min{ background: #c8ead7; }
 .lg-avg{ background: #9fd9bd; }
 .lg-max{ background: #79c9a7; }
+
+.mkd-back.mkd-back--pretty {
+  background-color: #458767 !important;
+  color: #fff !important;
+  background-image: none !important;
+}
+
+.mkd-back.mkd-back--pretty:hover {
+  background-color: #2e5c46 !important;
+}

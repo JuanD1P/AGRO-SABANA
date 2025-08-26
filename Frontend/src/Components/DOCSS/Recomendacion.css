@@ -37,17 +37,31 @@
   font-family: inherit;
 }
 .recx-hero{
-  position:sticky; top:0; z-index:5;
-  padding-top:8px; margin:0 -16px 10px;
-  background:var(--recx-hero-grad);
-  backdrop-filter: saturate(140%) blur(6px);
+  position: static;
+  top: 0;
+  z-index: 10;
+  margin: 0 0 10px;         
+  padding: 8px 0 10px;       /* conserva el espaciado vertical, sin margen */
+  background: var(--recx-hero-grad);
+  will-change: transform;     /* crea capa propia */
+  transform: translateZ(0);   /* evita jitter con backdrop-filter */
 }
 .recx-hero-glass{
-  margin:0 auto; max-width:1100px; padding:10px 12px 12px;
-  background:rgba(255,255,255,.6);
-  border:1px solid rgba(215,233,223,.8);
-  border-radius:16px;
-  box-shadow:0 8px 22px rgba(15, 125, 70, .08);
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 10px 12px 12px;
+  background: rgba(255,255,255,.6);
+  border: 1px solid rgba(215,233,223,.8);
+  border-radius: 16px;
+  box-shadow: 0 8px 22px rgba(15,125,70,.08);
+}
+.recx-hero::after{
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:-8px; height:8px;
+  pointer-events:none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.08), rgba(0,0,0,0));
+  opacity:.15;
 }
 .recx-title{margin:0;color:var(--recx-title);font-weight:900;font-size:1.45rem;letter-spacing:-.2px}
 .recx-meta{font-size:13px;color:var(--recx-gray-600);display:inline-flex;gap:10px;margin-top:4px}
@@ -90,6 +104,27 @@
 .recx-td--bold{font-weight:800}
 .recx-td--right{text-align:right}
 .recx-td--sticky{position:sticky; left:0; background:inherit; z-index:1}
+
+/* que la col sticky y su th tengan fondo sólido y mayor z-index */
+.recx-th--sticky,
+.recx-td--sticky{
+  position: sticky;
+  left: 0;
+  z-index: 3;                         /* antes 1/2 */
+  background: var(--recx-surface);    /* no 'inherit' */
+}
+
+/* sombrita a la derecha de la col sticky para que no “se meta” el texto de atrás */
+.recx-td--sticky::after,
+.recx-th--sticky::after{
+  content:"";
+  position:absolute;
+  top:0; right:-1px;
+  width: 12px; height: 100%;
+  pointer-events:none;
+  background: linear-gradient(to right, rgba(0,0,0,.08), rgba(0,0,0,0));
+  opacity: .18;
+}
 
 /* ===== Chips / Badges / Pills ===== */
 .recx-chip{
@@ -134,4 +169,21 @@
 @media (max-width:760px){
   .recx-title{font-size:1.25rem}
   .recx-table{min-width:720px}
+}
+ 
+/* antes: white-space:nowrap en todos; ahora lo quitamos */
+.recx-td{ padding:12px 14px; vertical-align:top; border-top:1px solid var(--recx-border); }
+.recx-th{ /* lo demás igual */ }
+
+/* utilidades para columnas numéricas / cortas */
+.recx-nowrap{ white-space: nowrap; }
+.recx-right{ text-align: right; }
+
+/* el chip del producto con ancho máximo + elipsis */
+.recx-td--sticky .recx-chip{
+  max-width: 220px;                   /* ajusta según gusto */
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

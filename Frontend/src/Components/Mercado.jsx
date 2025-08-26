@@ -257,7 +257,6 @@ useEffect(() => {
 
 <div className="mkd-actions" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
   <button className="mkd-back mkd-back--pretty" onClick={() => navigate("/Top3")}>
-    <span className="mkd-back-icon" aria-hidden>⬅️</span>
     Volver al Top 3
   </button>
 

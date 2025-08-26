@@ -409,6 +409,10 @@ const formatPrettyDateShort = (str) => {
           </div>
         </div>
       )}
+      {/* FOOTER */}
+      <footer className="footer">
+        © {new Date().getFullYear()} AgroSabana • Todos los derechos reservados.
+      </footer>
     </div>
   );
 }
